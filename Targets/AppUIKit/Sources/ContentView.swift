@@ -20,6 +20,10 @@ public struct ContentView: View {
                 .tabItem {
                     Label("Share", systemImage: "square.and.arrow.up.fill")
                 }
+            ScanView()
+                .tabItem {
+                    Label("Scan", systemImage: "qrcode.viewfinder")
+                }
         }
     }
 }
