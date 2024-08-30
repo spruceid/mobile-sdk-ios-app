@@ -1,0 +1,43 @@
+import SwiftUI
+import SpruceIDMobileSdkRs
+
+struct VerifyDL: Hashable {}
+
+struct VerifyDLView: View {
+    
+    @State var success: Bool?
+
+    
+    @Binding var path: NavigationPath
+        
+    var body: some View {
+        if(success == nil) {
+            ScanningComponent(
+                path: $path,
+                scanningParams: Scanning(
+                    subtitle: "Scan the\nback of your driver's license",
+                    scanningType: .pdf417,
+                    onCancel: {
+                        print("Cancel")
+                        path.removeLast()
+                    },
+                    onRead: { code in
+                        print(code)
+                        Task {
+                            do {
+                                try await verifyPdf417Barcode(payload: code)
+                                success = true
+                            } catch {
+                                print(error)
+                                success = false
+                            }
+                        }
+                    }
+                )
+            )
+        } else {
+            VerifierSuccessView(path: $path, success: success!, description: success! ? "Valid Driver's License" : "Invalid Driver's License")
+        }
+        
+    }
+}
