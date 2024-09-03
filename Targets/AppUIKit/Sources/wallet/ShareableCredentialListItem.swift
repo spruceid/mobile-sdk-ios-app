@@ -95,14 +95,6 @@ struct ShareableCredentialListItemQRCode: View {
                 }
                 .padding(.vertical, 12)
                 .onTapGesture {
-//                    Task {
-//                        do {
-//                            vp = try await vcToSignedVp(vc: vc, keyStr: ed25519_2020_10_18)
-//                        } catch {
-//                            print(error)
-//                        }
-//
-//                    }
                     showingQRCode.toggle()
                 }
                 if showingQRCode {

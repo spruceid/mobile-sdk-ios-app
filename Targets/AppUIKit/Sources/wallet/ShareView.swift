@@ -138,10 +138,3 @@ extension ShareViewDelegate: BLESessionStateDelegate {
         self.state = state
     }
 }
-
-// struct ShareView_Previews: PreviewProvider {
-//    static var previews: some View {
-//        let credentials = [generateMDoc()!]
-//        ShareView(credentials: .constant(CredentialStore(credentials: credentials)))
-//    }
-// }
