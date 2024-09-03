@@ -16,7 +16,6 @@ struct VerifyVCView: View {
                 scanningParams: Scanning(
                     scanningType: .qrcode,
                     onCancel: {
-                        print("Cancel")
                         path.removeLast()
                     },
                     onRead: { code in

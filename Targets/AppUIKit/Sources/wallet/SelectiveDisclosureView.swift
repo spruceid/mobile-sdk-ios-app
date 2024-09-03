@@ -35,34 +35,30 @@ public struct SelectiveDisclosureView: View {
         .padding(10)
         .buttonStyle(.borderedProminent)
         .sheet(
-            isPresented: $showingSDSheet,
-            onDismiss: {
-                switch delegate.state {
-                case .canceled:
-                    return
-                default:
-                    delegate.submitItems(items: itemsSelected)
-                }
-            }
+            isPresented: $showingSDSheet
         ) {
-            SDSheetView(itemsSelected: $itemsSelected, itemsRequests: $itemsRequests, proceed: $proceed)
+            SDSheetView(
+                itemsSelected: $itemsSelected,
+                itemsRequests: $itemsRequests,
+                proceed: $proceed,
+                onProceed: {
+                    delegate.submitItems(items: itemsSelected)
+                },
+                onCancel: {
+                    delegate.cancel()
+                }
+            )
         }
     }
 }
-
-
-//struct SelectiveDisclosureView_Previews: PreviewProvider {
-//    static var previews: some View {
-//        let itemsRequest = ItemsRequest(docType: "mdl", namespaces: ["aamva": ["age": true, "location": false]])
-//        SelectiveDisclosureView(itemsRequests: [itemsRequest])
-//    }
-//}
 
 struct SDSheetView: View {
     @Environment(\.dismiss) private var dismiss
     @Binding var itemsSelected: [String: [String: [String: Bool]]]
     @Binding var itemsRequests: [ItemsRequest]
     @Binding var proceed: Bool
+    let onProceed: () -> Void
+    let onCancel: () -> Void
     
     public var body: some View {
         NavigationStack {
@@ -89,11 +85,11 @@ struct SDSheetView: View {
             .toolbar(content: {
                 ToolbarItemGroup(placement: .bottomBar) {
                     Button("Cancel", role: .cancel) {
+                        onCancel()
                         proceed = false
-                        dismiss()
                     }.tint(.red)
                     Button("Share") {
-                        dismiss()
+                        onProceed()
                     }
                 }
             })

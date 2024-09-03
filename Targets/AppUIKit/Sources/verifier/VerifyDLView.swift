@@ -18,7 +18,6 @@ struct VerifyDLView: View {
                     subtitle: "Scan the\nback of your driver's license",
                     scanningType: .pdf417,
                     onCancel: {
-                        print("Cancel")
                         path.removeLast()
                     },
                     onRead: { code in

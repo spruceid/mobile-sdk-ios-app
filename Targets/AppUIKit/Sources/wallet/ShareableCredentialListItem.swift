@@ -2,6 +2,7 @@ import SwiftUI
 import SpruceIDMobileSdk
 import SpruceIDMobileSdkRs
 import CoreImage.CIFilterBuiltins
+import CryptoKit
 
 struct ShareableCredentialListItem: View {
     let credentialPack = CredentialPack()
@@ -12,14 +13,27 @@ struct ShareableCredentialListItem: View {
     init(mdoc: String) {
         self.mdoc = mdoc
         do {
-            let credentials = try credentialPack.addMDoc(mdocBase64: mdoc, keyPEM: keyPEM)
+            let keyAlias = UUID().uuidString
+            let key = try P256.Signing.PrivateKey(pemRepresentation: keyPEM)
+            let attributes = [kSecAttrKeyType: kSecAttrKeyTypeECSECPrimeRandom,
+                             kSecAttrKeyClass: kSecAttrKeyClassPrivate] as [String: Any]
+            let secKey = SecKeyCreateWithData(key.x963Representation as CFData,
+                                              attributes as CFDictionary,
+                                              nil)!
+            let query = [kSecClass: kSecClassKey,
+          kSecAttrApplicationLabel: keyAlias,
+                kSecAttrAccessible: kSecAttrAccessibleWhenUnlocked,
+     kSecUseDataProtectionKeychain: true,
+                      kSecValueRef: secKey] as [String: Any]
+            SecItemDelete(query as CFDictionary)
+            _ = SecItemAdd(query as CFDictionary, nil)
+            let credentials = try credentialPack.addMDoc(mdocBase64: mdoc, keyAlias: keyAlias)
             self.mdocId = credentials![0].id
         } catch {
             print(error.localizedDescription)
             self.mdocId = nil
         }
     }
-
     
     var body: some View {
         VStack {

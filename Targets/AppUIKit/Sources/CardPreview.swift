@@ -7,7 +7,7 @@ struct CardPreviewData {
     init() {
         do {
             let _ = try credentialPack.addW3CVC(credentialString: jsonstring)
-            let _ = try credentialPack.addMDoc(mdocBase64: mdocBase64, keyPEM: keyPEM)
+            let _ = try credentialPack.addMDoc(mdocBase64: mdocBase64)
             
         } catch {
             print(error.localizedDescription)
