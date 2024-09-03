@@ -8,7 +8,7 @@ public struct SelectiveDisclosureView: View {
     @State private var itemsRequests: [ItemsRequest]
     @Binding var proceed: Bool
     @StateObject var delegate: ShareViewDelegate
-    
+
     init(itemsRequests: [ItemsRequest], delegate: ShareViewDelegate, proceed: Binding<Bool>) {
         self.itemsRequests = itemsRequests
         self._delegate = StateObject(wrappedValue: delegate)
@@ -27,7 +27,7 @@ public struct SelectiveDisclosureView: View {
         self.itemsSelected = defaultSelected
         self._proceed = proceed
     }
-    
+
     public var body: some View {
         Button("Select items") {
             showingSDSheet.toggle()
@@ -59,7 +59,7 @@ struct SDSheetView: View {
     @Binding var proceed: Bool
     let onProceed: () -> Void
     let onCancel: () -> Void
-    
+
     public var body: some View {
         NavigationStack {
             Form {
@@ -71,7 +71,7 @@ struct SDSheetView: View {
                             ForEach(Array(namespaceItems.keys), id: \.self) { item in
                                 let retain: Bool = namespaceItems[item]!
                                 VStack {
-                                    ItemToggle(selected: self.binding(docType: request.docType, namespace: namespace, item: item) , name: item)
+                                    ItemToggle(selected: self.binding(docType: request.docType, namespace: namespace, item: item), name: item)
                                     if retain {
                                         Text("This piece of information will be retained by the reader.").font(.system(size: 10))
                                     }
@@ -95,7 +95,7 @@ struct SDSheetView: View {
             })
         }
     }
-    
+
     private func binding(docType: String, namespace: String, item: String) -> Binding<Bool> {
             return .init(
                 get: { self.itemsSelected[docType]![namespace]![item]! },
@@ -107,7 +107,7 @@ struct SDSheetView: View {
 struct ItemToggle: View {
     @Binding var selected: Bool
     let name: String
-    
+
     public var body: some View {
         Toggle(name, isOn: $selected)
     }

@@ -4,13 +4,13 @@ import SpruceIDMobileSdkRs
 struct VerifyVC: Hashable {}
 
 struct VerifyVCView: View {
-    
+
     @State var success: Bool?
-    
+
     @Binding var path: NavigationPath
-    
+
     var body: some View {
-        if(success == nil) {
+        if success == nil {
             ScanningComponent(
                 path: $path,
                 scanningParams: Scanning(
@@ -34,6 +34,6 @@ struct VerifyVCView: View {
         } else {
             VerifierSuccessView(path: $path, success: success!, description: success! ? "Valid Verifiable Credential" : "Invalid Verifiable Credential")
         }
-        
+
     }
 }

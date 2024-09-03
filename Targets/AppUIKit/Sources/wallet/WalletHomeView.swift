@@ -41,7 +41,7 @@ struct WalletHomeBody: View {
     var body: some View {
         ZStack {
             ScrollView(.vertical, showsIndicators: false) {
-                Section() {
+                Section {
                     ForEach(vcs, id: \.self) { vc in
                         GenericCredentialListItem(vc: vc)
                     }

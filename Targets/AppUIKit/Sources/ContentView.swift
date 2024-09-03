@@ -2,7 +2,7 @@ import SwiftUI
 
 public struct ContentView: View {
     @State var path: NavigationPath = .init()
-    
+
     public init() {}
 
     public var body: some View {
@@ -26,7 +26,7 @@ public struct ContentView: View {
                         VerifyVCView(path: $path)
                     }
             }
-            
+
         }
     }
 }

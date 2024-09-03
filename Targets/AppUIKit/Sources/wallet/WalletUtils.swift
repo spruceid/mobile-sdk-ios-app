@@ -21,7 +21,7 @@ func generateMDoc() -> MDoc? {
     do {
         let mdocData = Data(base64Encoded: mdocBase64)!
         let key = try P256.Signing.PrivateKey(pemRepresentation: keyPEM)
-        
+
         let attributes = [kSecAttrKeyType: kSecAttrKeyTypeECSECPrimeRandom,
                          kSecAttrKeyClass: kSecAttrKeyClassPrivate] as [String: Any]
         let secKey = SecKeyCreateWithData(key.x963Representation as CFData,
@@ -33,7 +33,7 @@ func generateMDoc() -> MDoc? {
  kSecUseDataProtectionKeychain: true,
                   kSecValueRef: secKey] as [String: Any]
         SecItemDelete(query as CFDictionary)
-        let _ = SecItemAdd(query as CFDictionary, nil)
+        _ = SecItemAdd(query as CFDictionary, nil)
         return MDoc(fromMDoc: mdocData, namespaces: [:], keyAlias: "mdoc_key")!
     } catch {
         print("\(error)")

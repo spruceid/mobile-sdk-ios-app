@@ -9,7 +9,7 @@ struct ShareableCredentialListItem: View {
     let mdoc: String
     let mdocId: String?
     @State var sheetOpen: Bool = false
-    
+
     init(mdoc: String) {
         self.mdoc = mdoc
         do {
@@ -34,7 +34,7 @@ struct ShareableCredentialListItem: View {
             self.mdocId = nil
         }
     }
-    
+
     var body: some View {
         VStack {
             VStack {
@@ -51,10 +51,10 @@ struct ShareableCredentialListItem: View {
                     .stroke(Color("CredentialBorder"), lineWidth: 1)
             )
             .padding(.all, 12)
-                
+
         }
         .sheet(isPresented: $sheetOpen) {
-            
+
         } content: {
             VStack {
                 Text("Review Info")
@@ -63,21 +63,20 @@ struct ShareableCredentialListItem: View {
                     .padding(.top, 25)
                 Text(mdocId!)
             }
-            
+
             .presentationDetents([.fraction(0.85)])
             .presentationDragIndicator(.automatic)
             .presentationBackgroundInteraction(.automatic)
-            
+
         }
     }
-    
+
 }
 
 struct ShareableCredentialListItemQRCode: View {
     let credentials: [Credential]
     @State private var showingQRCode = false
 
-    
     var body: some View {
         ZStack {
             Rectangle()
@@ -106,9 +105,9 @@ struct ShareableCredentialListItemQRCode: View {
 //                    }
                     showingQRCode.toggle()
                 }
-                if(showingQRCode) {
+                if showingQRCode {
                     QRSheetView(credentials: credentials)
-                    
+
                     Text("Shares your credential online or \n in-person, wherever accepted.")
                         .font(.customFont(font: .inter, style: .regular, size: .small))
                         .foregroundStyle(Color("TextOnPrimary"))
@@ -119,7 +118,6 @@ struct ShareableCredentialListItemQRCode: View {
         }
     }
 }
-
 
 struct ShareableCredentialListItemPreview: PreviewProvider {
     static var previews: some View {

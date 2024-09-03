@@ -13,7 +13,7 @@ struct Scanning: Hashable, Equatable {
     var subtitle: String
     var onCancel: (() -> Void)?
     var onRead: (String) -> Void
-    
+
     init(
         title: String = "Scan QR Code",
         subtitle: String = "Please align within the guides",
@@ -28,16 +28,16 @@ struct Scanning: Hashable, Equatable {
         self.onCancel = onCancel
         self.onRead = onRead
     }
-    
+
     func hash(into hasher: inout Hasher) {
         hasher.combine(id)
         hasher.combine(scanningType)
     }
-    
+
     static func ==(s1: Scanning, s2: Scanning) -> Bool {
         return s1.id == s2.id
     }
-    
+
 }
 
 ///  Camera permission enum
@@ -48,9 +48,9 @@ enum Permission: String {
 }
 
 struct ScanningView: View {
-        
+
     @Binding var path: NavigationPath
-    
+
     var scanningParams: Scanning
 
     var body: some View {
@@ -61,9 +61,9 @@ struct ScanningView: View {
 
 struct ScanningComponent: View {
     @Binding var path: NavigationPath
-    
+
     var scanningParams: Scanning
-    
+
     /// QR Code Scanner properties
     @State private var cameraPermission: Permission = .idle
 
@@ -117,7 +117,7 @@ struct ScanningComponent: View {
 
     var body: some View {
         ZStack {
-            if(cameraPermission == Permission.approved) {
+            if cameraPermission == Permission.approved {
                 switch scanningParams.scanningType {
                 case .qrcode:
                     QRCodeScanner(
@@ -153,7 +153,7 @@ struct ScanningComponent: View {
                         readerColor: .white
                     )
                 }
-                
+
             }
         }
         .onAppear(perform: checkCameraPermisssion)
@@ -180,4 +180,3 @@ struct ScanningComponent: View {
         .navigationBarBackButtonHidden(true)
     }
 }
-

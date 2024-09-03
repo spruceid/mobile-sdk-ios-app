@@ -20,13 +20,13 @@ public struct QRSheetView: View {
     var credentials: CredentialStore
     @State var proceed = true
     @StateObject var delegate: ShareViewDelegate
-    
+
     init(credentials: [Credential]) {
         let credentialStore = CredentialStore(credentials: credentials)
         self.credentials = credentialStore
         self._delegate = StateObject(wrappedValue: ShareViewDelegate(credentials: credentialStore))
     }
-    
+
     @ViewBuilder
     var cancelButton: some View {
         Button("Cancel") {
@@ -38,7 +38,7 @@ public struct QRSheetView: View {
             .tint(.red)
             .foregroundColor(.red)
     }
-    
+
     public var body: some View {
         VStack {
             if proceed {
@@ -115,15 +115,15 @@ public struct QRSheetView: View {
 class ShareViewDelegate: ObservableObject {
     @Published var state: BLESessionState = .connected
     private var sessionManager: BLESessionManager?
-    
+
     init(credentials: CredentialStore) {
         self.sessionManager = credentials.presentMdocBLE(deviceEngagement: .QRCode, callback: self)!
     }
-    
+
     func cancel() {
         self.sessionManager?.cancel()
     }
-    
+
     func submitItems(items: [String: [String: [String: Bool]]]) {
         self.sessionManager?.submitNamespaces(items: items.mapValues { namespaces in
             return namespaces.mapValues { items in
@@ -139,10 +139,9 @@ extension ShareViewDelegate: BLESessionStateDelegate {
     }
 }
 
-
-//struct ShareView_Previews: PreviewProvider {
+// struct ShareView_Previews: PreviewProvider {
 //    static var previews: some View {
 //        let credentials = [generateMDoc()!]
 //        ShareView(credentials: .constant(CredentialStore(credentials: credentials)))
 //    }
-//}
+// }

@@ -46,7 +46,7 @@ struct VerifierHomeBody: View {
                         .foregroundStyle(Color("TextOnPrimary"))
                     Spacer()
                 }
-                
+
                 // SprucePass
                 VerifierListItem(
                     title: "Driver's License Document",
@@ -56,7 +56,7 @@ struct VerifierHomeBody: View {
                 ).onTapGesture {
                     path.append(VerifyDL())
                 }
-                
+
                 // Over 21
                 VerifierListItem(
                     title: "Employment Authorization Document",
@@ -66,7 +66,7 @@ struct VerifierHomeBody: View {
                 ).onTapGesture {
                     path.append(VerifyEA())
                 }
-                
+
                 // mDL
                 VerifierListItem(
                     title: "Verifiable Credential",
@@ -83,7 +83,7 @@ struct VerifierHomeBody: View {
 }
 
 struct VerifierListItem: View {
-    
+
     let title: String
     let description: String
     let binary: Bool
@@ -109,7 +109,7 @@ struct VerifierListItem: View {
 struct VerifierListItemTag: View {
     let binary: Bool
     let fields: Int
-    
+
     var body: some View {
         if binary {
             Text("Binary")
@@ -134,7 +134,7 @@ struct VerifierListItemTag: View {
                         .stroke(Color("VerifierRequestBadgeFieldBorder"), lineWidth: 1)
                 )
         }
-        
+
     }
 }
 

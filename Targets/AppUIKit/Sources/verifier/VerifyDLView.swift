@@ -4,14 +4,13 @@ import SpruceIDMobileSdkRs
 struct VerifyDL: Hashable {}
 
 struct VerifyDLView: View {
-    
+
     @State var success: Bool?
 
-    
     @Binding var path: NavigationPath
-        
+
     var body: some View {
-        if(success == nil) {
+        if success == nil {
             ScanningComponent(
                 path: $path,
                 scanningParams: Scanning(
@@ -37,6 +36,6 @@ struct VerifyDLView: View {
         } else {
             VerifierSuccessView(path: $path, success: success!, description: success! ? "Valid Driver's License" : "Invalid Driver's License")
         }
-        
+
     }
 }

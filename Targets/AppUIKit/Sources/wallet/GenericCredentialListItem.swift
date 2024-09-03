@@ -3,35 +3,33 @@ import SpruceIDMobileSdk
 import SpruceIDMobileSdkRs
 import CoreImage.CIFilterBuiltins
 
-
 struct GenericCredentialListItem: View {
     let credentialPack = CredentialPack()
     let vc: String
     @State var sheetOpen: Bool = false
-    
+
     init(vc: String) {
         self.vc = vc
         do {
-            let _ = try credentialPack.addW3CVC(credentialString: vc)
+            _ = try credentialPack.addW3CVC(credentialString: vc)
         } catch {
             print(error.localizedDescription)
         }
     }
 
-    
     @ViewBuilder
-    func descriptionFormatter(values: [String:[String:GenericJSON]]) -> some View {
+    func descriptionFormatter(values: [String: [String: GenericJSON]]) -> some View {
         let w3cvc = values
             .first(where: { credentialPack.get(credentialId: $0.key) is W3CVC })
             .map { $0.value } ?? [:]
-                
+
         VStack(alignment: .leading, spacing: 12) {
             Text(w3cvc["description"]?.toString() ?? "")
                 .font(.customFont(font: .inter, style: .regular, size: .p))
                 .foregroundStyle(Color("TextBody"))
                 .padding(.top, 6)
             Spacer()
-            if (w3cvc["valid"]?.toString() == "true") {
+            if w3cvc["valid"]?.toString() == "true" {
                 HStack {
                     Image("Valid")
                     Text("Valid")
@@ -42,7 +40,7 @@ struct GenericCredentialListItem: View {
         }
         .padding(.leading, 12)
     }
-    
+
     @ViewBuilder
     var cardList: some View {
         Card(
@@ -63,7 +61,7 @@ struct GenericCredentialListItem: View {
                             .foregroundStyle(Color("TextHeader"))
                     }
                     .padding(.leading, 12)
-                    
+
                 },
                 descriptionKeys: ["description", "valid"],
                 descriptionFormatter: descriptionFormatter,
@@ -73,18 +71,17 @@ struct GenericCredentialListItem: View {
                         .first(where: { credentialPack.get(credentialId: $0.key) is W3CVC })
                         .map { $0.value } ?? [:]
                     let img = w3cvc["issuer"]?.dictValue?["image"]?.toString() ?? ""
-                    
+
                     return Image(base64String: img.replacingOccurrences(of: "data:image/png;base64,", with: ""))
                             .frame(width: 70, height: 0)
                             .scaleEffect(CGSize(width: 0.2, height: 0.2))
-                           
-                    
+
                 }
             ))
         )
-            
+
     }
-    
+
     @ViewBuilder
     var cardDetails: some View {
         Card(
@@ -98,15 +95,15 @@ struct GenericCredentialListItem: View {
                                 .first(where: { credentialPack.get(credentialId: $0.key) is W3CVC })
                                 .map { $0.value } ?? [:]
                             let credentialSubject = w3cvc["credentialSubject"]?.dictValue ?? [:]
-                            
+
                             var portrait = ""
                             var firstName = ""
                             var lastName = ""
                             var birthDate = ""
-                            
-                            if (credentialSubject["driversLicense"] != nil) {
+
+                            if credentialSubject["driversLicense"] != nil {
                                 let dl = credentialSubject["driversLicense"]?.dictValue
-                                
+
                                 portrait = dl?["portrait"]?.toString() ?? ""
                                 firstName = dl?["given_name"]?.toString() ?? ""
                                 lastName = dl?["family_name"]?.toString() ?? ""
@@ -118,9 +115,7 @@ struct GenericCredentialListItem: View {
                                 lastName = credentialSubject["familyName"]?.toString() ?? ""
                                 birthDate = credentialSubject["birthDate"]?.toString() ?? ""
                             }
-                            
-                            
-                            
+
                             return HStack {
                                 VStack(alignment: .leading) {
                                     Text("Portrait")
@@ -138,14 +133,14 @@ struct GenericCredentialListItem: View {
                                             .foregroundStyle(Color("TextBody"))
                                         Text(firstName)
                                     }
-                                    
+
                                     VStack(alignment: .leading) {
                                         Text("Last Name")
                                             .font(.customFont(font: .inter, style: .regular, size: .p))
                                             .foregroundStyle(Color("TextBody"))
                                         Text(lastName)
                                     }
-                                    
+
                                     VStack(alignment: .leading) {
                                         Text("Birth Date")
                                             .font(.customFont(font: .inter, style: .regular, size: .p))
@@ -174,13 +169,13 @@ struct GenericCredentialListItem: View {
                             }
                             .padding(.horizontal, 40)
                             .padding(.top, 12)
-                        }),
+                        })
                 ]
             ))
         )
         .padding(.all, 12)
     }
-    
+
     var body: some View {
         VStack {
             VStack {
@@ -197,10 +192,10 @@ struct GenericCredentialListItem: View {
                     .stroke(Color("CredentialBorder"), lineWidth: 1)
             )
             .padding(.all, 12)
-                
+
         }
         .sheet(isPresented: $sheetOpen) {
-            
+
         } content: {
             VStack {
                 Text("Review Info")
@@ -218,14 +213,14 @@ struct GenericCredentialListItem: View {
                     .padding(.all, 12)
                 cardDetails
             }
-            
+
             .presentationDetents([.fraction(0.85)])
             .presentationDragIndicator(.automatic)
             .presentationBackgroundInteraction(.automatic)
-            
+
         }
     }
-    
+
 }
 
 struct GenericCredentialListItemQRCode: View {
@@ -240,10 +235,10 @@ struct GenericCredentialListItemQRCode: View {
     init() {
         self.vc = small_vc
     }
-    
+
     func generateQRCode(from string: String) -> UIImage {
         filter.message = Data(string.utf8)
-        
+
         if let outputImage = filter.outputImage?.transformed(by: transform) {
             if let cgImage = context.createCGImage(outputImage, from: outputImage.extent) {
                 return UIImage(cgImage: cgImage)
@@ -252,7 +247,7 @@ struct GenericCredentialListItemQRCode: View {
 
         return UIImage(systemName: "xmark.circle") ?? UIImage()
     }
-    
+
     var body: some View {
         ZStack {
             Rectangle()
@@ -277,16 +272,16 @@ struct GenericCredentialListItemQRCode: View {
                         } catch {
                             print(error)
                         }
-                        
+
                     }
                     showingQRCode.toggle()
                 }
-                if(showingQRCode && vp != nil) {
+                if showingQRCode && vp != nil {
                     Image(uiImage: generateQRCode(from: vp!))
                         .resizable()
                         .scaledToFit()
                         .frame(width: 290, height: 290)
-                    
+
                     Text("Shares your credential online or \n in-person, wherever accepted.")
                         .font(.customFont(font: .inter, style: .regular, size: .small))
                         .foregroundStyle(Color("TextOnPrimary"))

@@ -6,10 +6,9 @@ struct VerifierSuccessView: View {
     var success: Bool
     var description: String
 
-    
     var body: some View {
         VStack(alignment: .leading) {
-            if(success) {
+            if success {
                 ZStack(alignment: .leading) {
                     RoundedRectangle(cornerRadius: 8)
                         .foregroundColor(Color("GreenValid"))
@@ -22,7 +21,7 @@ struct VerifierSuccessView: View {
                                 .font(.customFont(font: .inter, style: .semiBold, size: .h0))
                                 .foregroundStyle(Color.white)
                         }
-                        
+
                     }
                     .padding(.all, 20)
                 }
@@ -40,20 +39,20 @@ struct VerifierSuccessView: View {
                                 .font(.customFont(font: .inter, style: .semiBold, size: .h0))
                                 .foregroundStyle(Color.white)
                         }
-                        
+
                     }
                     .padding(.all, 20)
                 }
                 .frame(height: 250)
             }
-            
+
             Text(description)
                 .font(.customFont(font: .inter, style: .semiBold, size: .h1))
                 .foregroundStyle(Color("TextHeader"))
                 .padding(.top, 20)
-            
+
             Spacer()
-            
+
             Button {
                 while !path.isEmpty {
                     path.removeLast()
