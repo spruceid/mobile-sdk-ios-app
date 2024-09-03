@@ -14,7 +14,7 @@ public struct ContentView: View {
         TabView {
             CredentialsView(credentials: $credentials)
                 .tabItem {
-                    Label("Credentials", systemImage: "mobile.pass.fill")
+                    Label("Credentials", systemImage: "wallet.pass.fill")
                 }
             ShareView(credentials: $credentials)
                 .tabItem {
