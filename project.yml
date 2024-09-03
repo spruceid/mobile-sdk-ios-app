@@ -3,9 +3,9 @@ options:
   bundleIdPrefix: com.spruceid.mobile
 packages:
   SpruceIDMobileSdk:
-    # url: https://github.com/spruceid/mobile-sdk-swift
-    # from: 0.0.10
-    path: "../wallet-sdk-swift"
+    url: https://github.com/spruceid/mobile-sdk-swift
+    from: 0.0.10
+    # path: "../wallet-sdk-swift"
 settings:
   ENABLE_USER_SCRIPT_SANDBOXING: YES
   ENABLE_MODULE_VERIFIER: YES
