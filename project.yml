@@ -3,9 +3,10 @@ options:
   bundleIdPrefix: com.spruceid.mobile
 packages:
   SpruceIDMobileSdk:
-    # url: https://github.com/spruceid/mobile-sdk-swift
+    url: https://github.com/spruceid/mobile-sdk-swift
     # from: 0.0.9
-    path: "../mobile-sdk-swift"
+    revision: 8b80370
+    # path: "../mobile-sdk-swift"
 settings:
   ENABLE_USER_SCRIPT_SANDBOXING: YES
   ENABLE_MODULE_VERIFIER: YES
