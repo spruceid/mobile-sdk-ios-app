@@ -67,7 +67,7 @@ struct VerifierHomeBody: View {
                     path.append(VerifyEA())
                 }
 
-                // mDL
+                // VC
                 VerifierListItem(
                     title: "Verifiable Credential",
                     description: "Verifies a Verifiable credential by reading the Verifiable Presentation QR Code",
@@ -76,6 +76,17 @@ struct VerifierHomeBody: View {
                 ).onTapGesture {
                     path.append(VerifyVC())
                 }
+
+                // MDoc
+                VerifierListItem(
+                    title: "MDoc",
+                    description: "Verifies a MDoc by reading the Presentation QR Code",
+                    binary: true,
+                    fields: 0
+                ).onTapGesture {
+                    path.append(VerifyMDoc())
+                }
+
             }
         .padding(.all, 24)
         .navigationBarBackButtonHidden(true)
