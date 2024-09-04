@@ -4,7 +4,7 @@ struct VerifierSuccessView: View {
     @Binding var path: NavigationPath
 
     var success: Bool
-    var description: String
+    var content: (any View)
 
     var body: some View {
         VStack(alignment: .leading) {
@@ -46,10 +46,7 @@ struct VerifierSuccessView: View {
                 .frame(height: 250)
             }
 
-            Text(description)
-                .font(.customFont(font: .inter, style: .semiBold, size: .h1))
-                .foregroundStyle(Color("TextHeader"))
-                .padding(.top, 20)
+            AnyView(content)
 
             Spacer()
 
@@ -68,7 +65,9 @@ struct VerifierSuccessView: View {
             .background(Color("GrayButton"))
             .cornerRadius(8)
         }
-        .padding(.all, 30)
+        .frame(maxWidth: .infinity)
+        .padding(.horizontal, 15)
+        .padding(.vertical, 30)
         .navigationBarBackButtonHidden(true)
     }
 }
@@ -80,7 +79,10 @@ struct VerifierSuccessViewPreview: PreviewProvider {
         VerifierSuccessView(
             path: $path,
             success: true,
-            description: "Valid Verifiable Credential"
+            content: Text("Valid Verifiable Credential")
+                        .font(.customFont(font: .inter, style: .semiBold, size: .h1))
+                        .foregroundStyle(Color("TextHeader"))
+                        .padding(.top, 20)
         )
     }
 }

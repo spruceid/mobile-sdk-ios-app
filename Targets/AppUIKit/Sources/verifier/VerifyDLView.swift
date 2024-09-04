@@ -34,7 +34,14 @@ struct VerifyDLView: View {
                 )
             )
         } else {
-            VerifierSuccessView(path: $path, success: success!, description: success! ? "Valid Driver's License" : "Invalid Driver's License")
+            VerifierSuccessView(
+                path: $path,
+                success: success!,
+                content: Text(success! ? "Valid Driver's License" : "Invalid Driver's License")
+                    .font(.customFont(font: .inter, style: .semiBold, size: .h1))
+                    .foregroundStyle(Color("TextHeader"))
+                    .padding(.top, 20)
+            )
         }
 
     }

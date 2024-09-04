@@ -51,7 +51,8 @@ public struct VerifyMDocView: View {
                 uri: scanned!,
                 requestedItems: ["org.iso.18013.5.1": ["given_name": true]],
                 trustAnchorRegistry: [issuer_cert],
-                onCancel: onCancel
+                onCancel: onCancel,
+                path: $path
             )
         }
     }
@@ -64,13 +65,15 @@ public struct VerifyMDocView: View {
 
 public struct MDocReaderView: View {
     @StateObject var delegate: MDocScanViewDelegate
+    @Binding var path: NavigationPath
     var onCancel: () -> Void
     
     init(
         uri: String,
         requestedItems: [String: [String: Bool]],
         trustAnchorRegistry: [String]?,
-        onCancel: @escaping () -> Void
+        onCancel: @escaping () -> Void,
+        path: Binding<NavigationPath>
     ) {
         self._delegate = StateObject(
             wrappedValue: MDocScanViewDelegate(
@@ -80,6 +83,18 @@ public struct MDocReaderView: View {
             )
         )
         self.onCancel = onCancel
+        self._path = path
+    }
+    
+    @ViewBuilder
+    var cancelButton: some View {
+        Button("Cancel") {
+            self.cancel()
+        }
+        .padding(10)
+        .buttonStyle(.bordered)
+        .tint(.red)
+        .foregroundColor(.red)
     }
     
     public var body: some View {
@@ -87,8 +102,10 @@ public struct MDocReaderView: View {
             switch self.delegate.state {
             case .advertizing:
                 Text("Waiting for holder...")
+                cancelButton
             case .connected:
                 Text("Connected to holder!")
+                cancelButton
             case .error(let error):
                 let message = switch error {
                 case .bluetooth(let central):
@@ -125,6 +142,7 @@ public struct MDocReaderView: View {
                     error
                 }
                 Text(message)
+                cancelButton
             case .downloadProgress(let index):
                 ProgressView(label: {
                     Text("Downloading... \(index) chunks received so far.")
@@ -132,17 +150,17 @@ public struct MDocReaderView: View {
                         .foregroundStyle(.secondary)
                 })
                 .progressViewStyle(.circular)
+                cancelButton
             case .success(let items):
-                Text("Success! Received: \(items)")
+                VerifierSuccessView(
+                    path: $path,
+                    success: true,
+                    content: Text("\(items["org.iso.18013.5.1"]!)")
+                            .font(.customFont(font: .inter, style: .semiBold, size: .h1))
+                            .foregroundStyle(Color("TextHeader"))
+                            .padding(.top, 20)
+                )
             }
-            Button("Cancel") {
-                self.cancel()
-            }
-            .padding(10)
-            .buttonStyle(.bordered)
-            .tint(.red)
-            .foregroundColor(.red)
-            .navigationBarBackButtonHidden(true)
         }
         .padding(.all, 30)
         .navigationBarBackButtonHidden(true)

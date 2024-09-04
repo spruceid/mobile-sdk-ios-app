@@ -51,7 +51,14 @@ struct VerifyEAView: View {
                 )
             }
         } else {
-            VerifierSuccessView(path: $path, success: success!, description: success! ? "Valid Employment Authorization" : "Invalid Employment Authorization")
+            VerifierSuccessView(
+                path: $path,
+                success: success!,
+                content: Text(success! ? "Valid Employment Authorization" : "Invalid Employment Authorization")
+                    .font(.customFont(font: .inter, style: .semiBold, size: .h1))
+                    .foregroundStyle(Color("TextHeader"))
+                    .padding(.top, 20)
+            )
         }
     }
 }
