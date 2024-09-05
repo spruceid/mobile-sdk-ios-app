@@ -46,6 +46,7 @@ targets:
           - armv7
         UISupportedInterfaceOrientations:
           - UIInterfaceOrientationPortrait
+        UIUserInterfaceStyle: "Light"
         UIAppFonts:
           - Inter-Black.ttf
           - Inter-BlackItalic.ttf
