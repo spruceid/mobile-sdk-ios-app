@@ -1,0 +1,89 @@
+import SwiftUI
+import SpruceIDMobileSdk
+
+struct AddToWallet: Hashable {
+    var rawCredential: String
+}
+
+struct AddToWalletView: View {
+    @Binding var path: NavigationPath
+    var rawCredential: String
+    var credential: GenericJSON?
+
+    
+    init(path: Binding<NavigationPath>, rawCredential: String) {
+        self._path = path
+        self.rawCredential = rawCredential
+        // decode sd-jwt and update next line
+        self.credential = getGenericJSON(jsonString: colofwdCredential)
+    }
+    
+    func getGenericJSON(jsonString: String) -> GenericJSON? {
+        if let data = jsonString.data(using: .utf8) {
+            do {
+                return try JSONDecoder().decode(GenericJSON.self, from: data)
+            } catch let error as NSError {
+                print(error)
+            }
+        }
+        return nil
+    }
+    
+    func addToWallet() {
+        // add to sqlite
+        // redirect home
+    }
+    
+    var body: some View {
+        ZStack {
+            VStack{
+                Text("Review Info")
+                    .font(.customFont(font: .inter, style: .bold, size: .h0))
+                    .padding(.horizontal, 20)
+                    .foregroundStyle(Color("TextHeader"))
+                ColoFWDItem(credential: credential).listComponent
+                ScrollView(.vertical, showsIndicators: false) {
+                    ColoFWDItem(credential: credential).detailsComponent
+                }
+            }
+            VStack {
+                Spacer()
+                Button {
+                    // store credential
+                    // return home
+                }  label: {
+                    Text("Add to Wallet")
+                        .frame(width: UIScreen.screenWidth)
+                        .padding(.horizontal, -20)
+                        .font(.customFont(font: .inter, style: .medium, size: .h4))
+                }
+                .foregroundColor(.white)
+                .padding(.vertical, 13)
+                .background(Color("CTAButtonGreen"))
+                .cornerRadius(8)
+                Button {
+                    while !path.isEmpty {
+                        path.removeLast()
+                    }
+                }  label: {
+                    Text("Decline")
+                        .frame(width: UIScreen.screenWidth)
+                        .padding(.horizontal, -20)
+                        .font(.customFont(font: .inter, style: .medium, size: .h4))
+                }
+                .foregroundColor(Color("SecondaryButtonRed"))
+                .padding(.vertical, 13)
+                .cornerRadius(8)
+            }
+        }
+        .navigationBarBackButtonHidden(true)
+    }
+}
+
+struct AddToWalletPreview: PreviewProvider {
+    @State static var path: NavigationPath = .init()
+
+    static var previews: some View {
+        AddToWalletView(path: $path, rawCredential: "")
+    }
+}
