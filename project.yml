@@ -38,6 +38,15 @@ targets:
         CFBundleDisplayName: "SpruceKit Reference App"
         CFBundleIconName: "AppIcon"
         CFBundlePackageType: "APPL"
+        CFBundleURLTypes:
+          - CFBundleTypeRole: Viewer
+            CFBundleURLName: OID4VP
+            CFBundleURLSchemes:
+              - openid4vp
+          - CFBundleTypeRole: Viewer
+            CFBundleURLName: SPRUCEID
+            CFBundleURLSchemes:
+              - spruceid
         NSBluetoothAlwaysUsageDescription: "Secure transmission of mobile DL data"
         NSCameraUsageDescription: "We need to access your camera for scanning"
         ITSAppUsesNonExemptEncryption: "NO"
