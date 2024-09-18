@@ -6,6 +6,14 @@ struct ColoFWDItem: View {
     
     @State var sheetOpen: Bool = false
     
+    init(credential: GenericJSON?) {
+        self.credential = credential
+    }
+    
+    init(rawCredential: String) {        
+        self.credential = getGenericJSON(jsonString: colofwdCredential)
+    }
+    
     @ViewBuilder
     public var listComponent: some View {
         let achievementName = credential?.dictValue?["achievement"]?.dictValue?["name"]?.toString() ?? ""

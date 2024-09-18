@@ -18,20 +18,17 @@ struct AddToWalletView: View {
         self.credential = getGenericJSON(jsonString: colofwdCredential)
     }
     
-    func getGenericJSON(jsonString: String) -> GenericJSON? {
-        if let data = jsonString.data(using: .utf8) {
-            do {
-                return try JSONDecoder().decode(GenericJSON.self, from: data)
-            } catch let error as NSError {
-                print(error)
-            }
+    func back() {
+        while !path.isEmpty {
+            path.removeLast()
         }
-        return nil
     }
     
     func addToWallet() {
-        // add to sqlite
-        // redirect home
+        _ = CredentialDataStore.shared.insert(
+            rawCredential: rawCredential
+        )
+        back()
     }
     
     var body: some View {
@@ -49,8 +46,7 @@ struct AddToWalletView: View {
             VStack {
                 Spacer()
                 Button {
-                    // store credential
-                    // return home
+                    addToWallet()
                 }  label: {
                     Text("Add to Wallet")
                         .frame(width: UIScreen.screenWidth)
@@ -62,9 +58,7 @@ struct AddToWalletView: View {
                 .background(Color("CTAButtonGreen"))
                 .cornerRadius(8)
                 Button {
-                    while !path.isEmpty {
-                        path.removeLast()
-                    }
+                    back()
                 }  label: {
                     Text("Decline")
                         .frame(width: UIScreen.screenWidth)

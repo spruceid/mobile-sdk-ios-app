@@ -41,6 +41,9 @@ public struct ContentView: View {
                     .navigationDestination(for: VerifierSettingsHome.self) { _ in
                         VerifierSettingsHomeView(path: $path)
                     }
+                    .navigationDestination(for: WalletSettingsHome.self) { _ in
+                        WalletSettingsHomeView(path: $path)
+                    }
                     .navigationDestination(for: AddToWallet.self) { addToWalletParams in
                         AddToWalletView(
                             path: $path,

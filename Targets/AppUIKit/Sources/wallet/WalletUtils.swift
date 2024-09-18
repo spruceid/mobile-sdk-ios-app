@@ -41,6 +41,17 @@ func generateMDoc() -> MDoc? {
     }
 }
 
+func getGenericJSON(jsonString: String) -> GenericJSON? {
+    if let data = jsonString.data(using: .utf8) {
+        do {
+            return try JSONDecoder().decode(GenericJSON.self, from: data)
+        } catch let error as NSError {
+            print(error)
+        }
+    }
+    return nil
+}
+
 extension String {
 
     func camelCaseToWords() -> String {
