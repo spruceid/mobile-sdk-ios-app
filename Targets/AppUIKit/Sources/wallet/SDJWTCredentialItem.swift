@@ -1,7 +1,7 @@
 import SwiftUI
 import SpruceIDMobileSdk
 
-struct ColoFWDItem: View {
+struct SDJWTCredentialItem: View {
     var credential: GenericJSON?
     
     @State var sheetOpen: Bool = false
@@ -11,7 +11,7 @@ struct ColoFWDItem: View {
     }
     
     init(rawCredential: String) {        
-        self.credential = getGenericJSON(jsonString: colofwdCredential)
+        self.credential = getGenericJSON(jsonString: mockAchievementCredential)
     }
     
     @ViewBuilder
