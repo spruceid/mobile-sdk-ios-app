@@ -15,7 +15,7 @@ struct AddToWalletView: View {
         self._path = path
         self.rawCredential = rawCredential
         // decode sd-jwt and update next line
-        self.credential = getGenericJSON(jsonString: colofwdCredential)
+        self.credential = getGenericJSON(jsonString: mockAchievementCredential)
     }
     
     func back() {
@@ -38,9 +38,9 @@ struct AddToWalletView: View {
                     .font(.customFont(font: .inter, style: .bold, size: .h0))
                     .padding(.horizontal, 20)
                     .foregroundStyle(Color("TextHeader"))
-                ColoFWDItem(credential: credential).listComponent
+                SDJWTCredentialItem(credential: credential).listComponent
                 ScrollView(.vertical, showsIndicators: false) {
-                    ColoFWDItem(credential: credential).detailsComponent
+                    SDJWTCredentialItem(credential: credential).detailsComponent
                 }
             }
             VStack {

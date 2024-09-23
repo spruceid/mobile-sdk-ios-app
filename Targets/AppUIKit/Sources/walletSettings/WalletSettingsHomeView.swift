@@ -51,7 +51,7 @@ struct WalletSettingsHomeBody: View {
         Button {
             _ = CredentialDataStore.shared.deleteAll()
         }  label: {
-            Text("Delete all ColoFWD credentials")
+            Text("Delete all added credentials")
                 .frame(width: UIScreen.screenWidth)
                 .padding(.horizontal, -20)
                 .font(.customFont(font: .inter, style: .medium, size: .h4))
