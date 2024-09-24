@@ -38,9 +38,9 @@ struct AddToWalletView: View {
                     .font(.customFont(font: .inter, style: .bold, size: .h0))
                     .padding(.horizontal, 20)
                     .foregroundStyle(Color("TextHeader"))
-                SDJWTCredentialItem(credential: credential).listComponent
+                AchievementCredentialItem(credential: credential).listComponent
                 ScrollView(.vertical, showsIndicators: false) {
-                    SDJWTCredentialItem(credential: credential).detailsComponent
+                    AchievementCredentialItem(credential: credential).detailsComponent
                 }
             }
             VStack {

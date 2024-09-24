@@ -48,7 +48,7 @@ struct WalletHomeBody: View {
             ScrollView(.vertical, showsIndicators: false) {
                 Section {
                     ForEach(credentials, id: \.self.id) { credential in
-                        SDJWTCredentialItem(rawCredential: credential.rawCredential)
+                        AchievementCredentialItem(rawCredential: credential.rawCredential)
                     }
                     ForEach(vcs, id: \.self) { vc in
                         GenericCredentialListItem(vc: vc)

@@ -1,7 +1,7 @@
 import SwiftUI
 import SpruceIDMobileSdk
 
-struct SDJWTCredentialItem: View {
+struct AchievementCredentialItem: View {
     var credential: GenericJSON?
     
     @State var sheetOpen: Bool = false
