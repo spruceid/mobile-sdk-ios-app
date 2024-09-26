@@ -8,7 +8,7 @@ public struct ContentView: View {
     func handleSpruceIDUrl(url: URL, path: String?, query: String?) {
         if(query != nil) {
             self.path.append(
-                AddToWallet(rawCredential: query!.replacingOccurrences(of: "sd-jwt=", with: ""))
+                AddToWallet(rawCredential: query!.replacingOccurrences(of: "sd-jwt=", with: "").replacingOccurrences(of: "%7E", with: "~"))
             )
         }
     }
