@@ -107,7 +107,7 @@ struct VerifierListItem: View {
                 Text(title)
                     .font(.customFont(font: .inter, style: .semiBold, size: .h1))
                     .foregroundStyle(Color("TextHeader"))
-                VerifierListItemTag(binary: binary, fields: fields)
+//                VerifierListItemTag(binary: binary, fields: fields)
                 Spacer()
                 Image("ArrowRight")
             }
