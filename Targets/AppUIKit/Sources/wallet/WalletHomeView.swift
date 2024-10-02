@@ -1,4 +1,6 @@
 import SwiftUI
+import SpruceIDMobileSdk
+import SpruceIDMobileSdkRs
 
 struct WalletHomeView: View {
     @Binding var path: NavigationPath
@@ -23,7 +25,47 @@ struct WalletHomeHeader: View {
                 .foregroundStyle(Color("TextHeader"))
             Spacer()
             Button {
-                path.append(WalletSettingsHome())
+//                path.append(WalletSettingsHome())
+                let client = Oid4vciAsyncHttpClient()
+                let oid4vciSession = Oid4vci.newWithAsyncClient(client: client)
+                Task {
+                    print("1")
+                    do {
+                        let res1 = try await oid4vciSession.initiateWithOffer(
+                            credentialOffer: "openid-credential-offer://?credential_offer_uri=https%3A%2F%2Fqa.veresexchanger.dev%2Fexchangers%2Fz1A68iKqcX2HbQGQfVSfFnjkM%2Fexchanges%2Fz19sfwajaE5qc4CPmHaj9cvc1%2Fopenid%2Fcredential-offer",
+                            clientId: "skit-ref-wallet",
+                            redirectUrl: "https://google.com"
+                        )
+                        print(res1)
+                        
+                        let nonce = try await oid4vciSession.exchangeToken()
+                        print(nonce)
+                        
+                        let metadata = try oid4vciSession.getMetadata()
+                        
+                        _ = KeyManager.generateSigningKey(id: "reference-app/default-signing")
+                        let jwk = KeyManager.getJwk(id: "reference-app/default-signing")
+                        
+                        let signingInput = try SpruceIDMobileSdkRs.generatePopPrepare(
+                            audience: metadata.issuer(),
+                            issuer: "did:example:1234",
+                            nonce: nonce,
+                            vm: "did:example:1234#0",
+                            publicJwk: """
+                            {"kty":"EC","crv":"P-256","x":"d781ozWe-MQ85L9FNb6m8l5EabvYo9nXSrJwVOWbbhA","y":"zGuEjtxFW49qQVfMfU30o6QdZcP0EfMb4Zl6P5GUQgk"}
+                            """,
+                            durationInSecs: nil
+                        )
+                        print(signingInput)
+                        
+                        
+                        
+                    } catch {
+                        print(error)
+                    }
+                    
+                }
+                
             } label: {
                 ZStack {
                     RoundedRectangle(cornerRadius: 8)
