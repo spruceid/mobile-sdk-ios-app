@@ -14,6 +14,18 @@ struct WalletHomeView: View {
     }
 }
 
+extension Data {
+  var base64EncodedUrlSafe: String {
+    let string = self.base64EncodedString()
+
+    // Make this URL safe and remove padding
+    return string
+      .replacingOccurrences(of: "+", with: "-")
+      .replacingOccurrences(of: "/", with: "_")
+      .replacingOccurrences(of: "=", with: "")
+  }
+}
+
 struct WalletHomeHeader: View {
     @Binding var path: NavigationPath
 
@@ -32,7 +44,7 @@ struct WalletHomeHeader: View {
                     print("1")
                     do {
                         let res1 = try await oid4vciSession.initiateWithOffer(
-                            credentialOffer: "openid-credential-offer://?credential_offer_uri=https%3A%2F%2Fqa.veresexchanger.dev%2Fexchangers%2Fz1A68iKqcX2HbQGQfVSfFnjkM%2Fexchanges%2Fz19sfwajaE5qc4CPmHaj9cvc1%2Fopenid%2Fcredential-offer",
+                            credentialOffer: "openid-credential-offer://?credential_offer_uri=https%3A%2F%2Fqa.veresexchanger.dev%2Fexchangers%2Fz1A68iKqcX2HbQGQfVSfFnjkM%2Fexchanges%2Fz19yKV1qydHnEzuo4qNgDXfSS%2Fopenid%2Fcredential-offer",
                             clientId: "skit-ref-wallet",
                             redirectUrl: "https://google.com"
                         )
@@ -46,19 +58,30 @@ struct WalletHomeHeader: View {
                         _ = KeyManager.generateSigningKey(id: "reference-app/default-signing")
                         let jwk = KeyManager.getJwk(id: "reference-app/default-signing")
                         
-                        let signingInput = try SpruceIDMobileSdkRs.generatePopPrepare(
+                        let signingInput = try await SpruceIDMobileSdkRs.generatePopPrepare(
                             audience: metadata.issuer(),
-                            issuer: "did:example:1234",
                             nonce: nonce,
-                            vm: "did:example:1234#0",
+                            didMethod: .jwk,
                             publicJwk: """
                             {"kty":"EC","crv":"P-256","x":"d781ozWe-MQ85L9FNb6m8l5EabvYo9nXSrJwVOWbbhA","y":"zGuEjtxFW49qQVfMfU30o6QdZcP0EfMb4Zl6P5GUQgk"}
                             """,
                             durationInSecs: nil
                         )
                         print(signingInput)
+                         
+                        let signature = KeyManager.signPayload(id: "reference-app/default-signing", payload: [UInt8](signingInput))
                         
+                        print(signature)
+
                         
+                        let pop = try SpruceIDMobileSdkRs.generatePopComplete(
+                            signingInput: signingInput,
+                            signature: Data(Data(signature!).base64EncodedUrlSafe.utf8)
+                        )
+                        print(pop)
+                        
+                        let credential = try await oid4vciSession.exchangeCredential(proofsOfPossession: [pop])
+                        print(credential)
                         
                     } catch {
                         print(error)
