@@ -59,6 +59,9 @@ public struct ContentView: View {
                             rawCredential: addToWalletParams.rawCredential
                         )
                     }
+                    .navigationDestination(for: OID4VCI.self) { _ in
+                        OID4VCIView(path: $path)
+                    }
             }
         }
         .onOpenURL { url in

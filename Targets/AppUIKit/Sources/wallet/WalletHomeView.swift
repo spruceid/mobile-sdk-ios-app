@@ -31,64 +31,25 @@ struct WalletHomeHeader: View {
 
     var body: some View {
         HStack {
-            Text("Spruce Wallet")
-                .font(.customFont(font: .inter, style: .bold, size: .h0))
+            Text("SpruceKit Demo Wallet")
+                .font(.customFont(font: .inter, style: .bold, size: .h2))
                 .padding(.leading, 36)
                 .foregroundStyle(Color("TextHeader"))
             Spacer()
             Button {
-//                path.append(WalletSettingsHome())
-                let client = Oid4vciAsyncHttpClient()
-                let oid4vciSession = Oid4vci.newWithAsyncClient(client: client)
-                Task {
-                    print("1")
-                    do {
-                        let res1 = try await oid4vciSession.initiateWithOffer(
-                            credentialOffer: "openid-credential-offer://?credential_offer_uri=https%3A%2F%2Fqa.veresexchanger.dev%2Fexchangers%2Fz1A68iKqcX2HbQGQfVSfFnjkM%2Fexchanges%2Fz19yKV1qydHnEzuo4qNgDXfSS%2Fopenid%2Fcredential-offer",
-                            clientId: "skit-ref-wallet",
-                            redirectUrl: "https://google.com"
-                        )
-                        print(res1)
-                        
-                        let nonce = try await oid4vciSession.exchangeToken()
-                        print(nonce)
-                        
-                        let metadata = try oid4vciSession.getMetadata()
-                        
-                        _ = KeyManager.generateSigningKey(id: "reference-app/default-signing")
-                        let jwk = KeyManager.getJwk(id: "reference-app/default-signing")
-                        
-                        let signingInput = try await SpruceIDMobileSdkRs.generatePopPrepare(
-                            audience: metadata.issuer(),
-                            nonce: nonce,
-                            didMethod: .jwk,
-                            publicJwk: """
-                            {"kty":"EC","crv":"P-256","x":"d781ozWe-MQ85L9FNb6m8l5EabvYo9nXSrJwVOWbbhA","y":"zGuEjtxFW49qQVfMfU30o6QdZcP0EfMb4Zl6P5GUQgk"}
-                            """,
-                            durationInSecs: nil
-                        )
-                        print(signingInput)
-                         
-                        let signature = KeyManager.signPayload(id: "reference-app/default-signing", payload: [UInt8](signingInput))
-                        
-                        print(signature)
-
-                        
-                        let pop = try SpruceIDMobileSdkRs.generatePopComplete(
-                            signingInput: signingInput,
-                            signature: Data(Data(signature!).base64EncodedUrlSafe.utf8)
-                        )
-                        print(pop)
-                        
-                        let credential = try await oid4vciSession.exchangeCredential(proofsOfPossession: [pop])
-                        print(credential)
-                        
-                    } catch {
-                        print(error)
-                    }
-                    
+                path.append(OID4VCI())
+            } label: {
+                ZStack {
+                    RoundedRectangle(cornerRadius: 8)
+                        .foregroundColor(Color("Primary"))
+                        .frame(width: 36, height: 36)
+                    Image("QRCodeReader")
+                        .foregroundColor(Color("SecondaryIconButton"))
                 }
-                
+            }
+            .padding(.trailing, 4)
+            Button {
+                path.append(WalletSettingsHome())
             } label: {
                 ZStack {
                     RoundedRectangle(cornerRadius: 8)
