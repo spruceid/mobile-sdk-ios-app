@@ -59,8 +59,8 @@ public struct ContentView: View {
                             rawCredential: addToWalletParams.rawCredential
                         )
                     }
-                    .navigationDestination(for: ScanOID4VP.self) { _ in
-                        ScanOID4VPQR(path: $path)
+                    .navigationDestination(for: DispatchQR.self) { _ in
+                        DispatchQRView(path: $path)
                     }
             }
         }

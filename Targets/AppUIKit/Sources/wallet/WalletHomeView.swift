@@ -71,7 +71,7 @@ struct WalletHomeBody: View {
                     VStack {
                         Spacer()
                         Button(action: {
-                            path.append(ScanOID4VP())
+                            path.append(DispatchQR())
                         }) {
                             HStack {
                                 Image("QRCodeReader")

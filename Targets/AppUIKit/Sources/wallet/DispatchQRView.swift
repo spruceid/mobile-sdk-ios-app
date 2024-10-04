@@ -1,9 +1,9 @@
 import SpruceIDMobileSdkRs
 import SwiftUI
 
-struct ScanOID4VP: Hashable {}
+struct DispatchQR: Hashable {}
 
-struct ScanOID4VPQR: View {
+struct DispatchQRView: View {
 
     @State var success: Bool?
 
@@ -22,6 +22,7 @@ struct ScanOID4VPQR: View {
                         do {
                             // TODO: Add other checks as necessary for
                             // validating OID4VP url and handle OID4VP flow
+                            // try await dispatchQRcode(jwtVp: code)
                             success = true
                         } catch {
                             success = false
