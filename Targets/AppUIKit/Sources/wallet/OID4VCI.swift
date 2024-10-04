@@ -19,7 +19,7 @@ struct OID4VCIView: View {
             do {
                 try await oid4vciSession.initiateWithOffer(
                     credentialOffer: credentialOffer,
-                    clientId: "skit-ref-wallet",
+                    clientId: "skit-demo-wallet",
                     redirectUrl: "https://spruceid.com"
                 )
                 
@@ -37,7 +37,7 @@ struct OID4VCIView: View {
                     publicJwk: jwk!,
                     durationInSecs: nil
                 )
-                 
+
                 let signature = KeyManager.signPayload(id: "reference-app/default-signing", payload: [UInt8](signingInput))
                 
                 let pop = try SpruceIDMobileSdkRs.generatePopComplete(
