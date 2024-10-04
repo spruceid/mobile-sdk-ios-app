@@ -16,7 +16,6 @@ struct OID4VCIView: View {
         let client = Oid4vciAsyncHttpClient()
         let oid4vciSession = Oid4vci.newWithAsyncClient(client: client)
         Task {
-            print("1")
             do {
                 try await oid4vciSession.initiateWithOffer(
                     credentialOffer: credentialOffer,
@@ -25,7 +24,6 @@ struct OID4VCIView: View {
                 )
                 
                 let nonce = try await oid4vciSession.exchangeToken()
-                print(nonce)
                 
                 let metadata = try oid4vciSession.getMetadata()
                 
@@ -36,31 +34,21 @@ struct OID4VCIView: View {
                     audience: metadata.issuer(),
                     nonce: nonce,
                     didMethod: .jwk,
-                    publicJwk: """
-                    {"kty":"EC","crv":"P-256","x":"d781ozWe-MQ85L9FNb6m8l5EabvYo9nXSrJwVOWbbhA","y":"zGuEjtxFW49qQVfMfU30o6QdZcP0EfMb4Zl6P5GUQgk"}
-                    """,
+                    publicJwk: jwk!,
                     durationInSecs: nil
                 )
-                print(signingInput)
                  
                 let signature = KeyManager.signPayload(id: "reference-app/default-signing", payload: [UInt8](signingInput))
-                
-                print(signature)
-
                 
                 let pop = try SpruceIDMobileSdkRs.generatePopComplete(
                     signingInput: signingInput,
                     signature: Data(Data(signature!).base64EncodedUrlSafe.utf8)
                 )
-                print(pop)
                 
                 let credential = try await oid4vciSession.exchangeCredential(proofsOfPossession: [pop])
-                print(credential)
                 credential.forEach {
-                    print($0.format, $0.payload, String(decoding: Data($0.payload), as: UTF8.self))
                     self.credential = String(decoding: Data($0.payload), as: UTF8.self)
                 }
-//                self.credential = credential.description
                 
             } catch {
                 // TODO: display error screen (waiting for designs)
@@ -81,22 +69,13 @@ struct OID4VCIView: View {
                         path.removeLast()
                     },
                     onRead: { code in
-//                        Task {
-//                            do {
-//                                try await verifyJwtVp(jwtVp: code)
-//                                success = true
-//                            } catch {
-//                                success = false
-//                                print(error)
-//                            }
-//                        }
                         getCredential(credentialOffer: code)
                     }
                 )
             )
         } else {
+            // TODO: display add to wallet for any credential
             Text(credential!)
-            .navigationBarBackButtonHidden(true)
         }
 
     }
