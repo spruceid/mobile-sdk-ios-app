@@ -17,8 +17,8 @@ struct WalletHomeHeader: View {
 
     var body: some View {
         HStack {
-            Text("Spruce Wallet")
-                .font(.customFont(font: .inter, style: .bold, size: .h0))
+            Text("SpruceKit Demo Wallet")
+                .font(.customFont(font: .inter, style: .bold, size: .h2))
                 .padding(.leading, 36)
                 .foregroundStyle(Color("TextHeader"))
             Spacer()
