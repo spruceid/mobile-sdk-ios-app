@@ -52,7 +52,7 @@ struct OID4VCIView: View {
                 
                 try credentials.forEach {
                     let cred = String(decoding: Data($0.payload), as: UTF8.self)
-                    _ = try self.credentialPack!.addW3CVC(credentialString: cred)
+                    _ = try self.credentialPack?.addJsonVc(jsonVc: JsonVc.newFromJson(utf8JsonString: cred))
                     self.credential = cred
                 }
                 
