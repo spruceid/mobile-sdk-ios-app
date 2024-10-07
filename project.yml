@@ -57,6 +57,7 @@ targets:
         UILaunchScreen: {}
         UIRequiredDeviceCapabilities:
           - armv7
+          - telephony
         UISupportedInterfaceOrientations:
           - UIInterfaceOrientationPortrait
         UIRequiresFullScreen: true
