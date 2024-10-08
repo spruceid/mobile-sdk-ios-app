@@ -5,14 +5,15 @@ import SpruceIDMobileSdkRs
 struct OID4VCI: Hashable {}
 
 struct OID4VCIView: View {
+    @State var loading: Bool = false
+    @State var err: String?
     @State var credential: String?
     @State var credentialPack: CredentialPack?
 
     @Binding var path: NavigationPath
     
     func getCredential(credentialOffer: String) {
-        // TODO: display loading screen (waiting for designs)
-
+        loading = true
         let client = Oid4vciAsyncHttpClient()
         let oid4vciSession = Oid4vci.newWithAsyncClient(client: client)
         Task {
@@ -57,15 +58,23 @@ struct OID4VCIView: View {
                 }
                 
             } catch {
-                // TODO: display error screen (waiting for designs)
+                err = error.localizedDescription
                 print(error)
             }
-            
+            loading = false
         }
     }
 
     var body: some View {
-        if credential == nil {
+        if loading {
+            VStack {
+                Text("Loading...")
+            }
+        } else if err != nil {
+            VStack {
+                Text(err!)
+            }
+        } else if credential == nil {
             ScanningComponent(
                 path: $path,
                 scanningParams: Scanning(
