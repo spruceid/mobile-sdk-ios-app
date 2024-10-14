@@ -76,7 +76,15 @@ struct WalletHomeBody: View {
                     ScrollView(.vertical, showsIndicators: false) {
                         Section {
                             ForEach(credentials, id: \.self.id) { credential in
-                                AchievementCredentialItem(
+//                                AchievementCredentialItem(
+//                                    rawCredential: credential.rawCredential,
+//                                    onDelete: {
+//                                        _ = CredentialDataStore.shared.delete(id: credential.id)
+//                                        self.credentials = CredentialDataStore.shared
+//                                            .getAllCredentials()
+//                                    }
+//                                )
+                                GenericCredentialItem(
                                     rawCredential: credential.rawCredential,
                                     onDelete: {
                                         _ = CredentialDataStore.shared.delete(id: credential.id)
