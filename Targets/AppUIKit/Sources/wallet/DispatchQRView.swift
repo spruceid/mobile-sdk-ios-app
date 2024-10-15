@@ -18,10 +18,11 @@ struct DispatchQRView: View {
                 print("DISPLAYING CREDENTIAL REQUEST")
                 print(verificationRequestOffer)
                 if verificationRequestOffer.hasPrefix("openid4vp://") {
-                    // TODO: Implement OID4VP flow for credential request from user
+                    // TODO for Joey: Implement OID4VP flow for verification request from user
                 } else {
                     print(
                         "The QR code you have scanned is not recognized as a verification request")
+                    // TODO for Juliano: Add UI component for "QR not recognized" error screen
                 }
                 loading = false
             }
