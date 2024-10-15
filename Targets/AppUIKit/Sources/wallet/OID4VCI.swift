@@ -67,9 +67,7 @@ struct OID4VCIView: View {
 
     var body: some View {
         if loading {
-            VStack {
-                Text("Loading...")
-            }
+            LoadingView(loadingText: "Loading...")
         } else if err != nil {
             VStack {
                 Text(err!)
@@ -91,7 +89,6 @@ struct OID4VCIView: View {
         } else {
             AddToWalletView(path: _path, rawCredential: credential!)
         }
-
     }
 }
 
