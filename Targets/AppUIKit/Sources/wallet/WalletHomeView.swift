@@ -76,14 +76,6 @@ struct WalletHomeBody: View {
                     ScrollView(.vertical, showsIndicators: false) {
                         Section {
                             ForEach(credentials, id: \.self.id) { credential in
-//                                AchievementCredentialItem(
-//                                    rawCredential: credential.rawCredential,
-//                                    onDelete: {
-//                                        _ = CredentialDataStore.shared.delete(id: credential.id)
-//                                        self.credentials = CredentialDataStore.shared
-//                                            .getAllCredentials()
-//                                    }
-//                                )
                                 GenericCredentialItem(
                                     rawCredential: credential.rawCredential,
                                     onDelete: {
@@ -93,9 +85,6 @@ struct WalletHomeBody: View {
                                     }
                                 )
                             }
-                            //                    ForEach(vcs, id: \.self) { vc in
-                            //                        GenericCredentialListItem(vc: vc)
-                            //                    }
                             //                    ShareableCredentialListItem(mdoc: mdocBase64)
                         }
                         .padding(.bottom, 60)
@@ -129,12 +118,20 @@ struct WalletHomeBody: View {
                     }
                 }
             } else {
-                VStack {
-                    Spacer()
-                    Section {
-                        Image("EmptyWallet")
+                ZStack {
+                    VStack {
+                        Section {
+                            Image("AddFirstCredential")
+                        }
+                        Spacer()
                     }
-                    Spacer()
+                    VStack {
+                        Spacer()
+                        Section {
+                            Image("EmptyWallet")
+                        }
+                        Spacer()
+                    }
                 }
             }
         }
