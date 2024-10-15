@@ -2,24 +2,27 @@ import SwiftUI
 import SpruceIDMobileSdk
 import SpruceIDMobileSdkRs
 
-struct GenericCredentialItem: View {
-    let credentialPack = CredentialPack()
-    let rawCredential: String
+struct GenericCredentialItem: View, AbstractCredentialItem {
+    let credentialPack: CredentialPack
     let onDelete: (() -> Void)?
     
     @State var sheetOpen: Bool = false
     @State var optionsOpen: Bool = false
 
     init(rawCredential: String, onDelete: (() -> Void)? = nil) {
-        self.rawCredential = rawCredential
         self.onDelete = onDelete
-        
-        if let _ = try? credentialPack.addJwtVc(jwtVc: JwtVc.newFromCompactJws(jws: rawCredential)) {}
-        else if let _ = try? credentialPack.addJsonVc(jsonVc: JsonVc.newFromJson(utf8JsonString: rawCredential)) {}
-        else if let _ = try? credentialPack.addMDoc(mdoc: Mdoc.fromStringifiedDocument(stringifiedDocument: rawCredential, keyAlias: UUID().uuidString)) {}
+        self.credentialPack = CredentialPack()
+        if let _ = try? self.credentialPack.addJwtVc(jwtVc: JwtVc.newFromCompactJws(jws: rawCredential)) {}
+        else if let _ = try? self.credentialPack.addJsonVc(jsonVc: JsonVc.newFromJson(utf8JsonString: rawCredential)) {}
+        else if let _ = try? self.credentialPack.addMDoc(mdoc: Mdoc.fromStringifiedDocument(stringifiedDocument: rawCredential, keyAlias: UUID().uuidString)) {}
         else {
 //            print("Couldn't parse credential: \(rawCredential)")
         }
+    }
+    
+    init(credentialPack: CredentialPack, onDelete: (() -> Void)? = nil) {
+        self.onDelete = onDelete
+        self.credentialPack = credentialPack
     }
 
     @ViewBuilder
@@ -80,7 +83,7 @@ struct GenericCredentialItem: View {
     }
 
     @ViewBuilder
-    var cardList: some View {
+    func cardList() -> some View {
         Card(
             credentialPack: credentialPack,
             rendering: CardRendering.list(CardRenderingListView(
@@ -174,7 +177,7 @@ struct GenericCredentialItem: View {
     }
 
     @ViewBuilder
-    var cardDetails: some View {
+    public func credentialDetails() -> any View {
         Card(
             credentialPack: credentialPack,
             rendering: CardRendering.details(CardRenderingDetailsView(
@@ -193,7 +196,7 @@ struct GenericCredentialItem: View {
     }
 
     @ViewBuilder
-    public func listComponent(withOptions: Bool = false) -> some View {
+    public func listComponent(withOptions: Bool = false) -> any View {
         VStack {
             VStack {
                 if(withOptions){
@@ -201,7 +204,7 @@ struct GenericCredentialItem: View {
                         .padding(.top, 12)
                         .padding(.horizontal, 12)
                 } else {
-                    cardList
+                    cardList()
                         .padding(.top, 12)
                         .padding(.horizontal, 12)
                 }
@@ -216,27 +219,27 @@ struct GenericCredentialItem: View {
     }
     
     @ViewBuilder
-    public var detailsComponent: some View {
+    public func detailsComponent() -> any View {
         VStack {
             Text("Review Info")
                 .font(.customFont(font: .inter, style: .bold, size: .h0))
                 .foregroundStyle(Color("TextHeader"))
                 .padding(.top, 25)
-            listComponent()
+            AnyView(listComponent())
                 .frame(height: 120)
-            cardDetails
+            AnyView(credentialDetails())
         }
     }
 
     var body: some View {
-        listComponent(withOptions: true)
+        AnyView(listComponent(withOptions: true))
             .onTapGesture {
                 sheetOpen.toggle()
             }
             .sheet(isPresented: $sheetOpen) {
 
             } content: {
-                detailsComponent
+                AnyView(detailsComponent())
                     .presentationDetents([.fraction(0.85)])
                     .presentationDragIndicator(.automatic)
                     .presentationBackgroundInteraction(.automatic)

@@ -1,5 +1,27 @@
 import SwiftUI
 import SpruceIDMobileSdk
+import SpruceIDMobileSdkRs
+
+func parseCredential(rawCredential: String) throws -> CredentialPack{
+    let credPack = CredentialPack()
+    if let _ = try? credPack.addJwtVc(jwtVc: JwtVc.newFromCompactJws(jws: rawCredential)) {}
+    else if let _ = try? credPack.addJsonVc(jsonVc: JsonVc.newFromJson(utf8JsonString: rawCredential)) {}
+    else if let _ = try? credPack.addMDoc(mdoc: Mdoc.fromStringifiedDocument(stringifiedDocument: rawCredential, keyAlias: UUID().uuidString)) {}
+    else {
+        throw CredentialError.parsingError("Couldn't parse credential: \(rawCredential)")
+    }
+    return credPack
+}
+
+func credentialHasType(credentialPack: CredentialPack, credentialType: String) -> Bool {
+    let credentialTypes = credentialPack.findCredentialClaims(claimNames: ["type"])
+    let credentialWithType = credentialTypes.first(where: { credential in
+        credential.value["type"]?.arrayValue?.contains(where: { type in
+            type.toString().lowercased() == credentialType.lowercased()
+        }) ?? false
+    })
+    return credentialWithType != nil ? true : false
+}
 
 func genericObjectDisplayer(object: [String : GenericJSON], filter: [String] = [], level: Int = 1) -> [AnyView] {
     var res: [AnyView] = []

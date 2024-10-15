@@ -12,21 +12,28 @@ struct AddToWalletView: View {
     var credential: GenericJSON?
     @State var presentError: Bool
     @State var errorDetails: String
-
+    
+    let credentialItem: AbstractCredentialItem?
     
     init(path: Binding<NavigationPath>, rawCredential: String) {
         self._path = path
         self.rawCredential = rawCredential
         
         do {
-            let res = try decodeRevealSdJwt(input: rawCredential)
-            self.credential = getGenericJSON(jsonString: res)
+            let credentialPack = try parseCredential(rawCredential: rawCredential)
+            if credentialHasType(credentialPack: credentialPack, credentialType: "AchievementCredential") {
+    //            credentialItem = AchievementCredentialItem(credentialPack: credPack)
+                credentialItem = GenericCredentialItem(credentialPack: credentialPack)
+            } else {
+                credentialItem = GenericCredentialItem(credentialPack: credentialPack)
+            }
             errorDetails = ""
             presentError = false
         } catch {
             print(error)
             errorDetails = "Error: \(error)"
             presentError = true
+            credentialItem = nil
         }
     }
     
@@ -48,19 +55,20 @@ struct AddToWalletView: View {
                 .monospaced()
     
     var body: some View {
-        let credentialItem = AchievementCredentialItem(credential: credential)
         ZStack {
-            if(!presentError){
+            if(!presentError && credentialItem != nil){
                 VStack{
                     Text("Review Info")
                         .font(.customFont(font: .inter, style: .bold, size: .h0))
                         .padding(.horizontal, 20)
                         .foregroundStyle(Color("TextHeader"))
-                    credentialItem.listComponent
+                    AnyView(credentialItem!.listComponent(withOptions: false))
+                        .frame(height: 100)
                     ScrollView(.vertical, showsIndicators: false) {
-                        credentialItem.detailsComponent
+                        AnyView(credentialItem!.credentialDetails())
                     }
                 }
+                .padding(.bottom, 120)
                 VStack {
                     Spacer()
                     Button {

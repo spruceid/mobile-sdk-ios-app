@@ -89,8 +89,7 @@ struct OID4VCIView: View {
                 )
             )
         } else {
-            // TODO: display add to wallet for any credential
-            Text(credential!)
+            AddToWalletView(path: _path, rawCredential: credential!)
         }
 
     }
