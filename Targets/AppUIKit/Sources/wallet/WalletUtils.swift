@@ -53,7 +53,6 @@ func getGenericJSON(jsonString: String) -> GenericJSON? {
 }
 
 extension String {
-
     func camelCaseToWords() -> String {
         return unicodeScalars.reduce("") {
             if CharacterSet.uppercaseLetters.contains($1) {
@@ -63,5 +62,9 @@ extension String {
             }
             return $0 + String($1)
         }
+    }
+    
+    func replaceUnderscores() -> String {
+        return self.replacingOccurrences(of: "_", with: " ")
     }
 }
