@@ -22,8 +22,7 @@ struct AddToWalletView: View {
         do {
             let credentialPack = try parseCredential(rawCredential: rawCredential)
             if credentialHasType(credentialPack: credentialPack, credentialType: "AchievementCredential") {
-    //            credentialItem = AchievementCredentialItem(credentialPack: credPack)
-                credentialItem = GenericCredentialItem(credentialPack: credentialPack)
+                credentialItem = AchievementCredentialItem(credentialPack: credentialPack)
             } else {
                 credentialItem = GenericCredentialItem(credentialPack: credentialPack)
             }

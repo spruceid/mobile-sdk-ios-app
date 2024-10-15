@@ -45,14 +45,6 @@ struct GenericCredentialItem: View, AbstractCredentialItem {
                 .foregroundStyle(Color("TextBody"))
                 .padding(.top, 6)
             Spacer()
-            if credential["valid"]?.toString() == "true" {
-                HStack {
-                    Image("Valid")
-                    Text("Valid")
-                        .font(.customFont(font: .inter, style: .medium, size: .xsmall))
-                        .foregroundStyle(Color("GreenValid"))
-                }
-            }
         }
         .padding(.leading, 12)
     }
@@ -173,7 +165,6 @@ struct GenericCredentialItem: View, AbstractCredentialItem {
                 Button("Cancel", role: .cancel) { }
             }
         )
-
     }
 
     @ViewBuilder
@@ -185,7 +176,11 @@ struct GenericCredentialItem: View, AbstractCredentialItem {
                     CardRenderingDetailsField(
                         keys: [],
                         formatter: { (values) in
-                            let credential = values.first.map { $0.value } ?? [:]
+                            let credential = values.first(where: {
+                                let credential = credentialPack.get(credentialId: $0.key)
+                                return credential?.asJwtVc() != nil || credential?.asJsonVc() != nil
+                            }).map { $0.value } ?? [:]
+                            
                             return CredentialObjectDisplayer(dict: credential)
                             .padding(.horizontal, 4)
                         })
