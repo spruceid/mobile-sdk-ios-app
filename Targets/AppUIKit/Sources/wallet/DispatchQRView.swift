@@ -17,7 +17,7 @@ struct DispatchQRView: View {
             do {
                 print("DISPLAYING CREDENTIAL REQUEST")
                 print(verificationRequestOffer)
-                if verificationRequestOffer.hasPrefix("openid://") {
+                if verificationRequestOffer.hasPrefix("openid4vp://") {
                     // TODO: Implement OID4VP flow for credential request from user
                 } else {
                     print(
