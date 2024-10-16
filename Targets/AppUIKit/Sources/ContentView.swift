@@ -65,6 +65,9 @@ public struct ContentView: View {
                     .navigationDestination(for: DispatchQR.self) { _ in
                         DispatchQRView(path: $path)
                     }
+                    .navigationDestination(for: HandleOID4VP.self) { _ in
+                        HandleOID4VPView(path: $path)
+                    }
             }
         }
         .onOpenURL { url in
