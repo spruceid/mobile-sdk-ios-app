@@ -1,5 +1,8 @@
-import SpruceIDMobileSdkRs
+//import SpruceIDMobileSdkRs
 import SwiftUI
+
+// The scheme for the OID4VP QR code.
+let OPEN_ID4VP_SCHEME = "openid4vp://"
 
 struct DispatchQR: Hashable {}
 
@@ -15,10 +18,15 @@ struct DispatchQRView: View {
         loading = true
         Task {
             do {
-                print("DISPLAYING CREDENTIAL REQUEST")
-                print(verificationRequestOffer)
-                if verificationRequestOffer.hasPrefix("openid4vp://") {
+                print("Reading URL: \(verificationRequestOffer)")
+                if verificationRequestOffer.hasPrefix(OPEN_ID4VP_SCHEME) {
                     // TODO for Joey: Implement OID4VP flow for verification request from user
+                    if let encodedUrl = verificationRequestOffer.addingPercentEncoding(
+                        withAllowedCharacters: .urlQueryAllowed)
+                    {
+                        // Use encodedUrl here
+                        path.append(HandleOID4VP(url: encodedUrl))
+                    }
                 } else {
                     print(
                         "The QR code you have scanned is not recognized as a verification request")
