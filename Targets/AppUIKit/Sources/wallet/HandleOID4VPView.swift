@@ -1,4 +1,4 @@
-import SpruceIDMobileSdk
+//import SpruceIDMobileSdk
 import SpruceIDMobileSdkRs
 import SwiftUI
 
@@ -14,27 +14,6 @@ struct HandleOID4VPView: View {
     @State private var permissionRequest: PermissionRequest? = nil
     @State var presentError: Bool
     @State var errorDetails: String
-
-    func launchEffect(url: URL, rawCredentials: [String], trustedDIDs: [String]) {
-        print("URL: \(url)")
-
-        do {
-            let credentials = try rawCredentials.map { rawCredential -> ParsedCredential in
-                // TODO: Update to use VDC collection in the future
-                // to detect the type of credential.
-                let sdJwt = try SdJwt.newFromCompactSdJwt(rawCredential)
-                return ParsedCredential.newSdJwt(sdJwt).intoGenericForm()
-            }
-
-            DispatchQueue.global(qos: .userInitiated).async {
-                holder = Holder.newWithCredentials(
-                    credentials: credentials, trustedDIDs: trustedDIDs)
-                permissionRequest = holder?.authorizationRequest(url: url)
-            }
-        } catch {
-            print("Error: \(error)")
-        }
-    }
 
     func credentialSelector(
         credentials: [ParsedCredential],
@@ -58,24 +37,44 @@ struct HandleOID4VPView: View {
                 .frame(maxWidth: .infinity, maxHeight: .infinity)
                 .padding(.horizontal, 24)
             }
+            .task {
+                print("URL: \(url)")
+
+                do {
+                    let credentials = try rawCredentials.map { rawCredential -> ParsedCredential in
+                        // TODO: Update to use VDC collection in the future
+                        // to detect the type of credential.
+                        let sdJwt = try SdJwt.newFromCompactSdJwt(input: rawCredential)
+                        return ParsedCredential.newSdJwt(sdJwtVc: sdJwt)
+                    }
+
+                    let holder = try await Holder.newWithCredentials(
+                        providedCredentials: credentials, trustedDids: trustedDids)
+                    let permissionRequest = try await holder.authorizationRequest(url: url)
+                } catch {
+                    print("Error: \(error)")
+                }
+            }
         } else {
             // Load the Credential View
-            credentialSelector(
-                credentials: permissionRequest!.credentials()
-            ) { selectedCredentials in
-                Task {
-                    do {
-                        guard let selectedCredential = selectedCredentials.first else { return }
-                        let permissionResponse = permissionRequest!.createPermissionResponse(
-                            selectedCredential)
+            ZStack {
+                //credentialSelector(
+                //    credentials: permissionRequest!.credentials()
+                //) { selectedCredentials in
+                //    Task {
+                //        do {
+                //            guard let selectedCredential = selectedCredentials.first else { return }
+                //            let permissionResponse = permissionRequest!.createPermissionResponse(
+                //                selectedCredential: selectedCredential)
 
-                        print("Submitting permission response")
+                //            print("Submitting permission response")
 
-                        holder!.submitPermissionResponse(permissionResponse)
-                    } catch {
-                        print("Error: \(error)")
-                    }
-                }
+                //            holder!.submitPermissionResponse(response: permissionResponse)
+                //        } catch {
+                //            print("Error: \(error)")
+                //        }
+                //    }
+                //}
             }
         }
     }

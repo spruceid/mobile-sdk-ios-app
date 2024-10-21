@@ -5,8 +5,11 @@ packages:
   SpruceIDMobileSdk:
     # url: https://github.com/spruceid/mobile-sdk-swift
     # from: 0.0.12
-    # revision: "9376148"
+    # revision: "9376148"i
     path: "../mobile-sdk-swift"
+  SpruceIDMobileSdkRs:
+    url: "https://github.com/spruceid/mobile-sdk-rs.git"
+    branch: "skit-459-integrate-oid4vp-into-mobile-sdk-rust-swift-kotlin"
   SQLite:
     url: https://github.com/stephencelis/SQLite.swift.git
     revision: a95fc6df17d108bd99210db5e8a9bac90fe984b8
