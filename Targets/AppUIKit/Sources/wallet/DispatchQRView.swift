@@ -20,11 +20,9 @@ struct DispatchQRView: View {
             do {
                 print("Reading URL: \(verificationRequestOffer)")
                 if verificationRequestOffer.hasPrefix(OPEN_ID4VP_SCHEME) {
-                    // TODO for Joey: Implement OID4VP flow for verification request from user
                     if let encodedUrl = verificationRequestOffer.addingPercentEncoding(
                         withAllowedCharacters: .urlQueryAllowed)
                     {
-                        // Use encodedUrl here
                         path.append(HandleOID4VP(url: encodedUrl))
                     }
                 } else {
