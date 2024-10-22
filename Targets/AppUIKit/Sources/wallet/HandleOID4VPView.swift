@@ -12,8 +12,6 @@ struct HandleOID4VPView: View {
     @State var rawCredentials: [String] = CredentialDataStore.shared.getAllRawCredentials()
     @State private var holder: Holder? = nil
     @State private var permissionRequest: PermissionRequest? = nil
-    @State var presentError: Bool
-    @State var errorDetails: String
 
     func credentialSelector(
         credentials: [ParsedCredential],
