@@ -1,4 +1,3 @@
-//import SpruceIDMobileSdkRs
 import SwiftUI
 
 // The scheme for the OID4VP QR code.

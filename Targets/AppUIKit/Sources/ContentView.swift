@@ -75,8 +75,6 @@ public struct ContentView: View {
             switch scheme {
             case "spruceid":
                 handleSpruceIDUrl(url: url)
-            //case "oid4vp":
-            //    handleOid4vpUrl(url: url)
             default:
                 return
             }
