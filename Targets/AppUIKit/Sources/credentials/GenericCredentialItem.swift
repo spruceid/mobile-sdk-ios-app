@@ -11,13 +11,11 @@ struct GenericCredentialItem: View, ICredentialView {
 
     init(rawCredential: String, onDelete: (() -> Void)? = nil) {
         self.onDelete = onDelete
-        self.credentialPack = CredentialPack()
-        if let _ = try? self.credentialPack.addJwtVc(jwtVc: JwtVc.newFromCompactJws(jws: rawCredential)) {}
-        else if let _ = try? self.credentialPack.addSdJwt(sdJwt: Vcdm2SdJwt.newFromCompactSdJwt(input: rawCredential)) {}
-        else if let _ = try? self.credentialPack.addJsonVc(jsonVc: JsonVc.newFromJson(utf8JsonString: rawCredential)) {}
-        else if let _ = try? self.credentialPack.addMDoc(mdoc: Mdoc.fromStringifiedDocument(stringifiedDocument: rawCredential, keyAlias: UUID().uuidString)) {}
-        else {
-//            print("Couldn't parse credential: \(rawCredential)")
+        do {
+            self.credentialPack = try addCredential(credentialPack: CredentialPack(), rawCredential: rawCredential)
+        } catch {
+            print(error)
+            self.credentialPack = CredentialPack()
         }
     }
     
@@ -30,7 +28,7 @@ struct GenericCredentialItem: View, ICredentialView {
     func descriptionFormatter(values: [String: [String: GenericJSON]]) -> some View {
         let credential = values.first(where: {
             let credential = credentialPack.get(credentialId: $0.key)
-            return credential?.asJwtVc() != nil || credential?.asJsonVc() != nil
+            return credential?.asJwtVc() != nil || credential?.asJsonVc() != nil || credential?.asSdJwt() != nil
         }).map { $0.value } ?? [:]
         
         var description = ""
@@ -54,7 +52,7 @@ struct GenericCredentialItem: View, ICredentialView {
     func leadingIconFormatter(values: [String: [String: GenericJSON]]) -> some View {
         let credential = values.first(where: {
             let credential = credentialPack.get(credentialId: $0.key)
-            return credential?.asJwtVc() != nil || credential?.asJsonVc() != nil
+            return credential?.asJwtVc() != nil || credential?.asJsonVc() != nil || credential?.asSdJwt() != nil
         }).map { $0.value } ?? [:]
         
         let issuerImg = credential["issuer"]?.dictValue?["image"]
@@ -84,7 +82,7 @@ struct GenericCredentialItem: View, ICredentialView {
                 titleFormatter: { (values) in
                     let credential = values.first(where: {
                         let credential = credentialPack.get(credentialId: $0.key)
-                        return credential?.asJwtVc() != nil || credential?.asJsonVc() != nil
+                        return credential?.asJwtVc() != nil || credential?.asJsonVc() != nil || credential?.asSdJwt() != nil
                     }).map { $0.value } ?? [:]
                     
                     var title = credential["name"]?.toString()
@@ -121,7 +119,7 @@ struct GenericCredentialItem: View, ICredentialView {
                 titleFormatter: { (values) in
                     let credential = values.first(where: {
                         let credential = credentialPack.get(credentialId: $0.key)
-                        return credential?.asJwtVc() != nil || credential?.asJsonVc() != nil
+                        return credential?.asJwtVc() != nil || credential?.asJsonVc() != nil || credential?.asSdJwt() != nil
                     }).map { $0.value } ?? [:]
                     
                     var title = credential["name"]?.toString()
@@ -179,7 +177,7 @@ struct GenericCredentialItem: View, ICredentialView {
                         formatter: { (values) in
                             let credential = values.first(where: {
                                 let credential = credentialPack.get(credentialId: $0.key)
-                                return credential?.asJwtVc() != nil || credential?.asJsonVc() != nil
+                                return credential?.asJwtVc() != nil || credential?.asJsonVc() != nil || credential?.asSdJwt() != nil
                             }).map { $0.value } ?? [:]
                             
                             return CredentialObjectDisplayer(dict: credential)
