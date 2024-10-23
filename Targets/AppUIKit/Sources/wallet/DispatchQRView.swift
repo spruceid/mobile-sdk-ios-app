@@ -19,11 +19,7 @@ struct DispatchQRView: View {
             do {
                 print("Reading URL: \(verificationRequestOffer)")
                 if verificationRequestOffer.hasPrefix(OPEN_ID4VP_SCHEME) {
-                    if let encodedUrl = verificationRequestOffer.addingPercentEncoding(
-                        withAllowedCharacters: .urlQueryAllowed)
-                    {
-                        path.append(HandleOID4VP(url: encodedUrl))
-                    }
+                        path.append(HandleOID4VP(url: verificationRequestOffer))
                 } else {
                     print(
                         "The QR code you have scanned is not recognized as a verification request")

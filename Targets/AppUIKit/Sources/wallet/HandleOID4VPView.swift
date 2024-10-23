@@ -1,4 +1,3 @@
-//import SpruceIDMobileSdk
 import SpruceIDMobileSdkRs
 import SwiftUI
 
@@ -20,6 +19,42 @@ struct HandleOID4VPView: View {
         // TODO: Implement UI component for selecting a valid
         // credential for satisfying the permission request
     }
+    
+    func presentCredential() async {
+        print("????? URL: \(url)")
+
+        do {
+            let credentials = rawCredentials.map { rawCredential in
+                // TODO: Update to use VDC collection in the future
+                // to detect the type of credential.
+                do {
+                    return try ParsedCredential.newSdJwt(sdJwtVc: Vcdm2SdJwt.newFromCompactSdJwt(input: rawCredential))
+                } catch {
+                    return nil
+                }
+            }.compactMap{ $0 }
+                        
+            print("#Credentials -- \(credentials.count)")
+
+            let holder = try await Holder.newWithCredentials(
+                providedCredentials: credentials, trustedDids: trustedDids)
+            
+            print("Holder -- \(holder)")
+
+            let permissionRequest = try await holder.authorizationRequest(url: Url(url))
+            
+            print("PermissionRequest -- \(permissionRequest) --- # \(permissionRequest.credentials().count)")
+            
+            let permissionResponse = permissionRequest.createPermissionResponse(selectedCredential: credentials.first!)
+            
+            print("PermissionResponse -- \(permissionResponse)")
+            
+            _ = try await holder.submitPermissionResponse(response: permissionResponse)
+
+        } catch {
+            print("Error: \(error)")
+        }
+    }
 
     var body: some View {
         if permissionRequest == nil {
@@ -36,22 +71,7 @@ struct HandleOID4VPView: View {
                 .padding(.horizontal, 24)
             }
             .task {
-                print("URL: \(url)")
-
-                do {
-                    let credentials = try rawCredentials.map { rawCredential -> ParsedCredential in
-                        // TODO: Update to use VDC collection in the future
-                        // to detect the type of credential.
-                        let sdJwt = try SdJwt.newFromCompactSdJwt(input: rawCredential)
-                        return ParsedCredential.newSdJwt(sdJwtVc: sdJwt)
-                    }
-
-                    let holder = try await Holder.newWithCredentials(
-                        providedCredentials: credentials, trustedDids: trustedDids)
-                    let permissionRequest = try await holder.authorizationRequest(url: url)
-                } catch {
-                    print("Error: \(error)")
-                }
+                await presentCredential()
             }
         } else {
             // Load the Credential View
