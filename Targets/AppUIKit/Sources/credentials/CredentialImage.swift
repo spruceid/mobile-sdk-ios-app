@@ -8,7 +8,8 @@ struct CredentialImage: View {
             return AnyView(AsyncImage(url: URL(string: image)) { image in
                 image
                     .resizable()
-                    .frame(width: 70, height: 70)
+                    .aspectRatio(contentMode: .fit)
+                    .frame(width: 60, height: 60)
             } placeholder: {})
         } else {
             return AnyView(Image(
@@ -18,7 +19,7 @@ struct CredentialImage: View {
                 )?
                 .resizable()
                 .aspectRatio(contentMode: .fit)
-                .frame(width: 70, height: 70))
+                .frame(width: 60, height: 60))
         }
     }
 }

@@ -42,8 +42,7 @@ struct GenericCredentialItem: ICredentialView {
             Text(description)
                 .font(.customFont(font: .inter, style: .regular, size: .p))
                 .foregroundStyle(Color("TextBody"))
-                .padding(.top, 6)
-            Spacer()
+                .padding(.top, 4)
         }
         .padding(.leading, 12)
     }
@@ -78,7 +77,7 @@ struct GenericCredentialItem: ICredentialView {
         Card(
             credentialPack: credentialPack,
             rendering: CardRendering.list(CardRenderingListView(
-                titleKeys: ["name"],
+                titleKeys: ["name", "type"],
                 titleFormatter: { (values) in
                     let credential = values.first(where: {
                         let credential = credentialPack.get(credentialId: $0.key)
@@ -132,18 +131,25 @@ struct GenericCredentialItem: ICredentialView {
                         }
                     }
                     
-                    return VStack(alignment: .leading, spacing: 12) {
-                        HStack {
+                    return ZStack(alignment: .topLeading) {
+                        HStack(alignment: .top) {
                             Spacer()
-                            Image("ThreeDotsHorizontal")
-                                .frame(height: 12)
-                                .onTapGesture {
-                                    optionsOpen = true
-                                }
+                            VStack {
+                                Image("ThreeDotsHorizontal")
+                                Spacer()
+                            }
+                            .frame(width: 24, height: 24)
+                            .onTapGesture {
+                                optionsOpen = true
+                            }
                         }
-                        Text(title ?? "")
-                            .font(.customFont(font: .inter, style: .semiBold, size: .h1))
-                            .foregroundStyle(Color("TextHeader"))
+                        .padding(.trailing, -12)
+                        HStack {
+                            Text(title ?? "")
+                                .padding(.trailing, 12)
+                                .font(.customFont(font: .inter, style: .semiBold, size: .h1))
+                                .foregroundStyle(Color("TextHeader"))
+                        }
                     }
                     .padding(.leading, 12)
                 },
@@ -195,14 +201,11 @@ struct GenericCredentialItem: ICredentialView {
             VStack {
                 if(withOptions){
                     listItemWithOptions()
-                        .padding(.top, 12)
-                        .padding(.horizontal, 12)
                 } else {
                     listItem()
-                        .padding(.top, 12)
-                        .padding(.horizontal, 12)
                 }
             }
+            .padding(12)
             .overlay(
                 RoundedRectangle(cornerRadius: 8)
                     .stroke(Color("CredentialBorder"), lineWidth: 1)
