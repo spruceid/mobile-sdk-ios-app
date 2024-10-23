@@ -13,7 +13,7 @@ struct AddToWalletView: View {
     @State var presentError: Bool
     @State var errorDetails: String
     
-    let credentialItem: AbstractCredentialItem?
+    let credentialItem: ICredentialView?
     
     init(path: Binding<NavigationPath>, rawCredential: String) {
         self._path = path
@@ -57,7 +57,7 @@ struct AddToWalletView: View {
                         .font(.customFont(font: .inter, style: .bold, size: .h0))
                         .padding(.horizontal, 20)
                         .foregroundStyle(Color("TextHeader"))
-                    AnyView(credentialItem!.listComponent(withOptions: false))
+                    AnyView(credentialItem!.credentialListItem(withOptions: false))
                         .frame(height: 100)
                     ScrollView(.vertical, showsIndicators: false) {
                         AnyView(credentialItem!.credentialDetails())

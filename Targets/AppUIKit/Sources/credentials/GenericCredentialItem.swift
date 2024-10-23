@@ -2,7 +2,7 @@ import SwiftUI
 import SpruceIDMobileSdk
 import SpruceIDMobileSdkRs
 
-struct GenericCredentialItem: View, AbstractCredentialItem {
+struct GenericCredentialItem: View, ICredentialView {
     let credentialPack: CredentialPack
     let onDelete: (() -> Void)?
     
@@ -13,6 +13,7 @@ struct GenericCredentialItem: View, AbstractCredentialItem {
         self.onDelete = onDelete
         self.credentialPack = CredentialPack()
         if let _ = try? self.credentialPack.addJwtVc(jwtVc: JwtVc.newFromCompactJws(jws: rawCredential)) {}
+        else if let _ = try? self.credentialPack.addSdJwt(sdJwt: Vcdm2SdJwt.newFromCompactSdJwt(input: rawCredential)) {}
         else if let _ = try? self.credentialPack.addJsonVc(jsonVc: JsonVc.newFromJson(utf8JsonString: rawCredential)) {}
         else if let _ = try? self.credentialPack.addMDoc(mdoc: Mdoc.fromStringifiedDocument(stringifiedDocument: rawCredential, keyAlias: UUID().uuidString)) {}
         else {
@@ -75,7 +76,7 @@ struct GenericCredentialItem: View, AbstractCredentialItem {
     }
 
     @ViewBuilder
-    func cardList() -> some View {
+    func listItem() -> some View {
         Card(
             credentialPack: credentialPack,
             rendering: CardRendering.list(CardRenderingListView(
@@ -112,7 +113,7 @@ struct GenericCredentialItem: View, AbstractCredentialItem {
     }
     
     @ViewBuilder
-    public var cardListWithOptions: some View {
+    func listItemWithOptions() -> some View {
         Card(
             credentialPack: credentialPack,
             rendering: CardRendering.list(CardRenderingListView(
@@ -191,15 +192,15 @@ struct GenericCredentialItem: View, AbstractCredentialItem {
     }
 
     @ViewBuilder
-    public func listComponent(withOptions: Bool = false) -> any View {
+    public func credentialListItem(withOptions: Bool = false) -> any View {
         VStack {
             VStack {
                 if(withOptions){
-                    cardListWithOptions
+                    listItemWithOptions()
                         .padding(.top, 12)
                         .padding(.horizontal, 12)
                 } else {
-                    cardList()
+                    listItem()
                         .padding(.top, 12)
                         .padding(.horizontal, 12)
                 }
@@ -214,30 +215,30 @@ struct GenericCredentialItem: View, AbstractCredentialItem {
     }
     
     @ViewBuilder
-    public func detailsComponent() -> any View {
-        VStack {
-            Text("Review Info")
-                .font(.customFont(font: .inter, style: .bold, size: .h0))
-                .foregroundStyle(Color("TextHeader"))
-                .padding(.top, 25)
-            AnyView(listComponent())
-                .frame(height: 120)
-            AnyView(credentialDetails())
-        }
-    }
-
-    var body: some View {
-        AnyView(listComponent(withOptions: true))
+    public func credentialPreviewAndDetails() -> any View {
+        AnyView(credentialListItem(withOptions: true))
             .onTapGesture {
                 sheetOpen.toggle()
             }
             .sheet(isPresented: $sheetOpen) {
 
             } content: {
-                AnyView(detailsComponent())
-                    .presentationDetents([.fraction(0.85)])
-                    .presentationDragIndicator(.automatic)
-                    .presentationBackgroundInteraction(.automatic)
+                VStack {
+                    Text("Review Info")
+                        .font(.customFont(font: .inter, style: .bold, size: .h0))
+                        .foregroundStyle(Color("TextHeader"))
+                        .padding(.top, 25)
+                    AnyView(credentialListItem())
+                        .frame(height: 120)
+                    AnyView(credentialDetails())
+                }
+                .presentationDetents([.fraction(0.85)])
+                .presentationDragIndicator(.automatic)
+                .presentationBackgroundInteraction(.automatic)
             }
+    }
+
+    var body: some View {
+        AnyView(credentialPreviewAndDetails())
     }
 }
