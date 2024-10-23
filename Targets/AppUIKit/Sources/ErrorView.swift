@@ -83,9 +83,10 @@ struct ErrorView: View {
                 .padding(.top, 10)
                 
             }
-            .padding(20)
+            .padding(.horizontal, 20)
+            .padding(.top, 30)
             .presentationDetents([.fraction(0.85)])
-            .presentationDragIndicator(.automatic)
+            .presentationDragIndicator(.visible)
             .presentationBackgroundInteraction(.automatic)
         }
         .navigationBarBackButtonHidden(true)
