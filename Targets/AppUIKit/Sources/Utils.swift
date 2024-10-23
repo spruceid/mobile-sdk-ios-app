@@ -2,6 +2,27 @@ import CryptoKit
 import SpruceIDMobileSdk
 import SpruceIDMobileSdkRs
 import Foundation
+import SwiftUI
+
+// modifier
+struct HideViewModifier: ViewModifier {
+    let isHidden: Bool
+    @ViewBuilder func body(content: Content) -> some View {
+        if isHidden {
+            EmptyView()
+        } else {
+            content
+        }
+    }
+}
+
+extension View {
+    func hide(if isHiddden: Bool) -> some View {
+        ModifiedContent(content: self,
+                        modifier: HideViewModifier(isHidden: isHiddden)
+        )
+    }
+}
 
 let ed25519_2020_10_18 =
     "{\"kty\":\"OKP\",\"crv\":\"Ed25519\",\"x\":\"G80iskrv_nE69qbGLSpeOHJgmV4MKIzsy5l5iT6pCww\",\"d\":\"39Ev8-k-jkKunJyFWog3k0OwgPjnKv_qwLhfqXdAXTY\"}"
