@@ -2,6 +2,38 @@ import SwiftUI
 import SpruceIDMobileSdk
 import SpruceIDMobileSdkRs
 
+// Get the credential and doesn't throws an error if can't parse
+func getCredentialItem(credential: Credential, onDelete: (() -> Void)? = nil) -> any ICredentialView {
+    do {
+        return try credentialDisplayerSelector(
+            rawCredential: credential.rawCredential,
+            onDelete: onDelete
+        )
+    } catch {
+        return GenericCredentialItem(credentialPack: CredentialPack(), onDelete: onDelete)
+    }
+    
+}
+
+// Get credential and throws error if can't parse
+func credentialDisplayerSelector(rawCredential: String, onDelete: (() -> Void)? = nil) throws -> any ICredentialView {
+    do {
+        // Test if it is SdJwt
+        let credentialPack = CredentialPack()
+        _ = try credentialPack.addSdJwt(sdJwt: Vcdm2SdJwt.newFromCompactSdJwt(input: rawCredential))
+        return AchievementCredentialItem(credentialPack: credentialPack, onDelete: onDelete)
+    } catch {}
+    
+    do {
+        return GenericCredentialItem(
+            credentialPack: try addCredential(credentialPack: CredentialPack(), rawCredential: rawCredential),
+            onDelete: onDelete
+        )
+    } catch {
+        throw error
+    }
+}
+
 func addCredential(credentialPack: CredentialPack, rawCredential: String) throws -> CredentialPack{
     if let _ = try? credentialPack.addJwtVc(jwtVc: JwtVc.newFromCompactJws(jws: rawCredential)) {}
     else if let _ = try? credentialPack.addJsonVc(jsonVc: JsonVc.newFromJson(utf8JsonString: rawCredential)) {}

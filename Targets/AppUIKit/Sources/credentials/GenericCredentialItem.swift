@@ -2,7 +2,7 @@ import SwiftUI
 import SpruceIDMobileSdk
 import SpruceIDMobileSdkRs
 
-struct GenericCredentialItem: View, ICredentialView {
+struct GenericCredentialItem: ICredentialView {
     let credentialPack: CredentialPack
     let onDelete: (() -> Void)?
     

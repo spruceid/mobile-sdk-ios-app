@@ -2,7 +2,7 @@ import SwiftUI
 import SpruceIDMobileSdk
 import SpruceIDMobileSdkRs
 
-struct AchievementCredentialItem: View, ICredentialView {
+struct AchievementCredentialItem: ICredentialView {
     let credentialPack: CredentialPack
     let onDelete: (() -> Void)?
     
@@ -12,11 +12,9 @@ struct AchievementCredentialItem: View, ICredentialView {
     init(rawCredential: String, onDelete: (() -> Void)? = nil) {
         self.onDelete = onDelete
         self.credentialPack = CredentialPack()
-        if let _ = try? self.credentialPack.addJwtVc(jwtVc: JwtVc.newFromCompactJws(jws: rawCredential)) {}
-        else if let _ = try? self.credentialPack.addJsonVc(jsonVc: JsonVc.newFromJson(utf8JsonString: rawCredential)) {}
-        else if let _ = try? self.credentialPack.addMDoc(mdoc: Mdoc.fromStringifiedDocument(stringifiedDocument: rawCredential, keyAlias: UUID().uuidString)) {}
+        if let _ = try? self.credentialPack.addSdJwt(sdJwt: Vcdm2SdJwt.newFromCompactSdJwt(input: rawCredential)) {}
         else {
-//            print("Couldn't parse credential: \(rawCredential)")
+            print("Couldn't parse SdJwt credential: \(rawCredential)")
         }
     }
     
@@ -28,8 +26,7 @@ struct AchievementCredentialItem: View, ICredentialView {
     @ViewBuilder
     func descriptionFormatter(values: [String: [String: GenericJSON]]) -> some View {
         let credential = values.first(where: {
-            let credential = credentialPack.get(credentialId: $0.key)
-            return credential?.asJwtVc() != nil || credential?.asJsonVc() != nil
+            credentialPack.get(credentialId: $0.key)?.asSdJwt() != nil
         }).map { $0.value } ?? [:]
         
         var description = ""
@@ -54,11 +51,10 @@ struct AchievementCredentialItem: View, ICredentialView {
         Card(
             credentialPack: credentialPack,
             rendering: CardRendering.list(CardRenderingListView(
-                titleKeys: ["name"],
+                titleKeys: ["name", "type"],
                 titleFormatter: { (values) in
                     let credential = values.first(where: {
-                        let credential = credentialPack.get(credentialId: $0.key)
-                        return credential?.asJwtVc() != nil || credential?.asJsonVc() != nil
+                        credentialPack.get(credentialId: $0.key)?.asSdJwt() != nil
                     }).map { $0.value } ?? [:]
                     
                     var title = credential["name"]?.toString()
@@ -89,11 +85,10 @@ struct AchievementCredentialItem: View, ICredentialView {
         Card(
             credentialPack: credentialPack,
             rendering: CardRendering.list(CardRenderingListView(
-                titleKeys: ["issuer"],
+                titleKeys: ["name", "type"],
                 titleFormatter: { (values) in
                     let credential = values.first(where: {
-                        let credential = credentialPack.get(credentialId: $0.key)
-                        return credential?.asJwtVc() != nil || credential?.asJsonVc() != nil
+                        credentialPack.get(credentialId: $0.key)?.asSdJwt() != nil
                     }).map { $0.value } ?? [:]
                     
                     var title = credential["name"]?.toString()
@@ -148,8 +143,7 @@ struct AchievementCredentialItem: View, ICredentialView {
                         keys: ["awardedDate", "credentialSubject"],
                         formatter: { (values) in
                             let credential = values.first(where: {
-                                let credential = credentialPack.get(credentialId: $0.key)
-                                return credential?.asJwtVc() != nil || credential?.asJsonVc() != nil
+                                credentialPack.get(credentialId: $0.key)?.asSdJwt() != nil
                             }).map { $0.value } ?? [:]
                             
                             let awardedDate = credential["awardedDate"]?.toString() ?? ""

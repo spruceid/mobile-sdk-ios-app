@@ -13,19 +13,14 @@ struct AddToWalletView: View {
     @State var presentError: Bool
     @State var errorDetails: String
     
-    let credentialItem: ICredentialView?
+    let credentialItem: (any ICredentialView)?
     
     init(path: Binding<NavigationPath>, rawCredential: String) {
         self._path = path
         self.rawCredential = rawCredential
         
         do {
-            let credentialPack = try addCredential(credentialPack: CredentialPack(), rawCredential: rawCredential)
-            if credentialHasType(credentialPack: credentialPack, credentialType: "AchievementCredential") {
-                credentialItem = AchievementCredentialItem(credentialPack: credentialPack)
-            } else {
-                credentialItem = GenericCredentialItem(credentialPack: credentialPack)
-            }
+            credentialItem = try credentialDisplayerSelector(rawCredential: rawCredential)
             errorDetails = ""
             presentError = false
         } catch {

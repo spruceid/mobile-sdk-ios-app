@@ -1,6 +1,6 @@
-import SwiftUI
 import SpruceIDMobileSdk
 import SpruceIDMobileSdkRs
+import SwiftUI
 
 struct WalletHomeView: View {
     @Binding var path: NavigationPath
@@ -64,14 +64,14 @@ struct WalletHomeBody: View {
                     ScrollView(.vertical, showsIndicators: false) {
                         Section {
                             ForEach(credentials, id: \.self.id) { credential in
-                                GenericCredentialItem(
-                                    rawCredential: credential.rawCredential,
+                                AnyView(getCredentialItem(
+                                    credential: credential,
                                     onDelete: {
                                         _ = CredentialDataStore.shared.delete(id: credential.id)
                                         self.credentials = CredentialDataStore.shared
                                             .getAllCredentials()
                                     }
-                                )
+                                ))
                             }
                             //                    ShareableCredentialListItem(mdoc: mdocBase64)
                         }
