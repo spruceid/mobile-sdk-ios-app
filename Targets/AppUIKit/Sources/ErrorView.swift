@@ -3,7 +3,7 @@ import SwiftUI
 struct ErrorView: View {
     let errorTitle: String
     let errorDetails: String
-    let closeButtonLabel: String = "Close"
+    var closeButtonLabel: String = "Close"
     let onClose: () -> Void
     
     @State var sheetOpen: Bool = false
