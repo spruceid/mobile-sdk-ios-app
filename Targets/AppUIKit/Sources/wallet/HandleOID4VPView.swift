@@ -18,18 +18,8 @@ struct HandleOID4VPView: View {
     @State private var credentialClaims: [String: [String: GenericJSON]] = [:]
 
     @State private var err: String? = nil
-
-    func credentialSelector(
-        credentials: [ParsedCredential],
-        onSelectedCredential: @escaping ([ParsedCredential]) -> Void
-    ) {
-        // TODO: Implement UI component for selecting a valid
-        // credential for satisfying the permission request
-    }
     
     func presentCredential() async {
-        print("????? URL: \(url)")
-
         do {
             let credentials = rawCredentials.map { rawCredential in
                 // TODO: Update to use VDC collection in the future
@@ -48,25 +38,11 @@ struct HandleOID4VPView: View {
             }
             
             credentialClaims = credentialPack.findCredentialClaims(claimNames: ["name", "type"])
-                        
-            print("#Credentials -- \(credentials.count)")
 
             holder = try await Holder.newWithCredentials(
                 providedCredentials: credentials, trustedDids: trustedDids)
-            
-            print("Holder -- \(holder)")
 
             permissionRequest = try await holder!.authorizationRequest(url: Url(url))
-            
-            
-//            print("PermissionRequest -- \(permissionRequest) --- # \(permissionRequest.credentials().count)")
-//            
-//            let permissionResponse = permissionRequest.createPermissionResponse(selectedCredential: credentials.first!)
-//            
-//            print("PermissionResponse -- \(permissionResponse)")
-//            
-//            _ = try await holder.submitPermissionResponse(response: permissionResponse)
-
         } catch {
             print("Error: \(error)")
         }
@@ -83,9 +59,7 @@ struct HandleOID4VPView: View {
             ErrorView(
                 errorTitle: "Error Presenting Credential",
                 errorDetails: err!,
-                onClose: {
-                    back()
-                }
+                onClose: back
             )
         } else {
             if permissionRequest == nil {
@@ -111,24 +85,102 @@ struct HandleOID4VPView: View {
                                 err = error.localizedDescription
                             }
                         },
-                        onCancel: {
-                            back()
-                        }
+                        onCancel: back
                     )
                 } else {
                     ErrorView(
                         errorTitle: "No matching credential(s)",
                         errorDetails: "There are no credentials in your wallet that match the verification request you have scanned",
                         closeButtonLabel: "Cancel",
-                        onClose: {
-                            back()
-                        }
+                        onClose: back
                     )
                 }
             } else {
-                // DataFieldSelector
+                DataFieldSelector(
+                    requestedFields: permissionRequest!.requestedFields(credential: selectedCredential!),
+                    onContinue: {
+                        Task {
+                            do {
+                                _ = try await holder?.submitPermissionResponse(response: permissionResponse!)
+                                back()
+                            } catch {
+                                err = error.localizedDescription
+                            }
+                        }
+                        
+                    },
+                    onCancel: back
+                )
             }
         }
+    }
+}
+
+struct DataFieldSelector: View {
+    let requestedFields: [String]
+    let onContinue: () -> Void
+    let onCancel: () -> Void
+    
+    init(requestedFields: [RequestedField], onContinue: @escaping () -> Void, onCancel: @escaping () -> Void) {
+        self.requestedFields = requestedFields.map { field in
+            field.name().capitalized
+        }
+        self.onContinue = onContinue
+        self.onCancel = onCancel
+    }
+    
+    var body: some View {
+        VStack {
+            Group {
+                Text("Verifier ")
+                    .font(.customFont(font: .inter, style: .bold, size: .h2))
+                    .foregroundColor(Color("ColorBlue600")) +
+                Text("is requesting access to the following information")
+                    .font(.customFont(font: .inter, style: .bold, size: .h2))
+                    .foregroundColor(Color("ColorStone950"))
+            }
+            .multilineTextAlignment(.center)
+
+            ScrollView {
+                ForEach(requestedFields, id: \.self) { field in
+                    Text("• \(field)")
+                        .font(.customFont(font: .inter, style: .regular, size: .h4))
+                        .foregroundStyle(Color("ColorStone950"))
+                        .frame(maxWidth: .infinity, alignment: .leading)
+                }
+            }
+            
+            HStack {
+                Button {
+                    onCancel()
+                }  label: {
+                    Text("Cancel")
+                        .frame(maxWidth: .infinity)
+                        .font(.customFont(font: .inter, style: .medium, size: .h4))
+                }
+                .foregroundColor(Color("ColorStone950"))
+                .padding(.vertical, 13)
+                .overlay(
+                    RoundedRectangle(cornerRadius: 8)
+                        .stroke(Color("BorderSecondary"), lineWidth: 1)
+                )
+                
+                Button {
+                    onContinue()
+                }  label: {
+                    Text("Approve")
+                        .frame(maxWidth: .infinity)
+                        .font(.customFont(font: .inter, style: .medium, size: .h4))
+                }
+                .foregroundColor(.white)
+                .padding(.vertical, 13)
+                .background(Color("ColorEmerald900"))
+                .clipShape(RoundedRectangle(cornerRadius: 8))
+            }
+            .fixedSize(horizontal: false, vertical: true)
+        }
+        .padding(.horizontal, 24)
+        .navigationBarBackButtonHidden(true)
     }
 }
 
@@ -180,6 +232,8 @@ struct CredentialSelector: View {
     var body: some View {
         VStack {
             Text("Select the credential\(allowMultiple ? "(s)" : "") to share")
+                .font(.customFont(font: .inter, style: .bold, size: .h2))
+                .foregroundStyle(Color("ColorStone950"))
             
             // TODO: Add select all when implement allowMultiple
             
@@ -199,8 +253,40 @@ struct CredentialSelector: View {
                 }
             }
             
-            // Cancel / Continue buttons
+            HStack {
+                Button {
+                    onCancel()
+                }  label: {
+                    Text("Cancel")
+                        .frame(maxWidth: .infinity)
+                        .font(.customFont(font: .inter, style: .medium, size: .h4))
+                }
+                .foregroundColor(Color("ColorStone950"))
+                .padding(.vertical, 13)
+                .overlay(
+                    RoundedRectangle(cornerRadius: 8)
+                        .stroke(Color("BorderSecondary"), lineWidth: 1)
+                )
+                
+                Button {
+                    if !selectedCredentials.isEmpty {
+                        onContinue(selectedCredentials)
+                    }
+                }  label: {
+                    Text("Continue")
+                        .frame(maxWidth: .infinity)
+                        .font(.customFont(font: .inter, style: .medium, size: .h4))
+                }
+                .foregroundColor(.white)
+                .padding(.vertical, 13)
+                .background(Color("ColorStone600"))
+                .clipShape(RoundedRectangle(cornerRadius: 8))
+                .opacity(selectedCredentials.isEmpty ? 0.6 : 1)
+            }
+            .fixedSize(horizontal: false, vertical: true)
         }
+        .padding(.horizontal, 24)
+        .navigationBarBackButtonHidden(true)
     }
 }
 
@@ -231,74 +317,38 @@ struct CredentialSelectorItem: View {
             HStack {
                 Toggle(isOn: $isChecked) {
                     Text(getCredentialTitle(credential))
+                        .font(.customFont(font: .inter, style: .semiBold, size: .h3))
+                        .foregroundStyle(Color("ColorStone950"))
                 }
                 .toggleStyle(iOSCheckboxToggleStyle())
                 Spacer()
                 if expanded {
-                    // seta pra dentro
-                    Text("Close")
+                    Image("Collapse")
                         .onTapGesture {
                             expanded = false
                         }
                 } else {
-                    // seta pra fora
-                    Text("Open")
+                    Image("Expand")
                         .onTapGesture {
                             expanded = true
                         }
                 }
             }
-            VStack {
+            VStack(alignment: .leading) {
                 ForEach(requestedFields, id: \.self) { field in
                     Text("• \(field)")
+                        .font(.customFont(font: .inter, style: .regular, size: .h4))
+                        .foregroundStyle(Color("ColorStone950"))
+                        .frame(maxWidth: .infinity, alignment: .leading)
                 }
             }
-            .hide(if: expanded)
+            .hide(if: !expanded)
         }
+        .padding(16)
         .overlay(
             RoundedRectangle(cornerRadius: 8)
-                .stroke(Color("BorderSecondary"), lineWidth: 1)
+                .stroke(Color("ColorBase300"), lineWidth: 1)
         )
+        .padding(.vertical, 6)
     }
 }
-
-struct iOSCheckboxToggleStyle: ToggleStyle {
-    func makeBody(configuration: Configuration) -> some View {
-        // 1
-        Button(action: {
-
-            // 2
-            configuration.isOn.toggle()
-
-        }, label: {
-            HStack {
-                // 3
-                Image(systemName: configuration.isOn ? "checkmark.square" : "square")
-
-                configuration.label
-            }
-        })
-    }
-}
-
-
-// Load the Credential View
-//ZStack {
-    //credentialSelector(
-    //    credentials: permissionRequest!.credentials()
-    //) { selectedCredentials in
-    //    Task {
-    //        do {
-    //            guard let selectedCredential = selectedCredentials.first else { return }
-    //            let permissionResponse = permissionRequest!.createPermissionResponse(
-    //                selectedCredential: selectedCredential)
-
-    //            print("Submitting permission response")
-
-    //            holder!.submitPermissionResponse(response: permissionResponse)
-    //        } catch {
-    //            print("Error: \(error)")
-    //        }
-    //    }
-    //}
-//}

@@ -17,21 +17,26 @@ func getCredentialItem(credential: Credential, onDelete: (() -> Void)? = nil) ->
 
 // Get credential and throws error if can't parse
 func credentialDisplayerSelector(rawCredential: String, onDelete: (() -> Void)? = nil) throws -> any ICredentialView {
-    do {
-        // Test if it is SdJwt
-        let credentialPack = CredentialPack()
-        _ = try credentialPack.addSdJwt(sdJwt: Vcdm2SdJwt.newFromCompactSdJwt(input: rawCredential))
-        return AchievementCredentialItem(credentialPack: credentialPack, onDelete: onDelete)
-    } catch {}
-    
-    do {
-        return GenericCredentialItem(
-            credentialPack: try addCredential(credentialPack: CredentialPack(), rawCredential: rawCredential),
-            onDelete: onDelete
-        )
-    } catch {
-        throw error
-    }
+    return GenericCredentialItem(
+        credentialPack: try addCredential(credentialPack: CredentialPack(), rawCredential: rawCredential),
+        onDelete: onDelete
+    )
+    /* This is temporarily commented on until we define the specific AchievementCredentialItem design */
+//    do {
+//        // Test if it is SdJwt
+//        let credentialPack = CredentialPack()
+//        _ = try credentialPack.addSdJwt(sdJwt: Vcdm2SdJwt.newFromCompactSdJwt(input: rawCredential))
+//        return AchievementCredentialItem(credentialPack: credentialPack, onDelete: onDelete)
+//    } catch {}
+//    
+//    do {
+//    return GenericCredentialItem(
+//        credentialPack: try addCredential(credentialPack: CredentialPack(), rawCredential: rawCredential),
+//        onDelete: onDelete
+//    )
+//    } catch {
+//        throw error
+//    }
 }
 
 func addCredential(credentialPack: CredentialPack, rawCredential: String) throws -> CredentialPack{

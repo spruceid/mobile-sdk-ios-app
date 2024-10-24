@@ -24,6 +24,32 @@ extension View {
     }
 }
 
+struct iOSCheckboxToggleStyle: ToggleStyle {
+    func makeBody(configuration: Configuration) -> some View {
+        Button(action: {
+            configuration.isOn.toggle()
+        }, label: {
+            HStack {
+                if configuration.isOn {
+                    ZStack {
+                        RoundedRectangle(cornerRadius: 2)
+                            .stroke(Color("ColorBlue600"), lineWidth: 1)
+                            .background(Color("ColorBlue600"))
+                            .frame(width: 20, height: 20)
+                        Image(systemName: "checkmark")
+                            .foregroundColor(.white)
+                    }
+                } else {
+                    RoundedRectangle(cornerRadius: 2)
+                        .stroke(Color("BorderSecondary"), lineWidth: 1)
+                        .frame(width: 20, height: 20)
+                }
+                configuration.label
+            }
+        })
+    }
+}
+
 let ed25519_2020_10_18 =
     "{\"kty\":\"OKP\",\"crv\":\"Ed25519\",\"x\":\"G80iskrv_nE69qbGLSpeOHJgmV4MKIzsy5l5iT6pCww\",\"d\":\"39Ev8-k-jkKunJyFWog3k0OwgPjnKv_qwLhfqXdAXTY\"}"
 
