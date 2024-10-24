@@ -12,7 +12,7 @@ func getCredentialItem(credential: Credential, onDelete: (() -> Void)? = nil) ->
     } catch {
         return GenericCredentialItem(credentialPack: CredentialPack(), onDelete: onDelete)
     }
-    
+
 }
 
 // Get credential and throws error if can't parse
@@ -39,12 +39,8 @@ func credentialDisplayerSelector(rawCredential: String, onDelete: (() -> Void)? 
 //    }
 }
 
-func addCredential(credentialPack: CredentialPack, rawCredential: String) throws -> CredentialPack{
-    if let _ = try? credentialPack.addJwtVc(jwtVc: JwtVc.newFromCompactJws(jws: rawCredential)) {}
-    else if let _ = try? credentialPack.addJsonVc(jsonVc: JsonVc.newFromJson(utf8JsonString: rawCredential)) {}
-    else if let _ = try? credentialPack.addSdJwt(sdJwt: Vcdm2SdJwt.newFromCompactSdJwt(input: rawCredential)) {}
-    else if let _ = try? credentialPack.addMDoc(mdoc: Mdoc.fromStringifiedDocument(stringifiedDocument: rawCredential, keyAlias: UUID().uuidString)) {}
-    else {
+func addCredential(credentialPack: CredentialPack, rawCredential: String) throws -> CredentialPack {
+    if let _ = try? credentialPack.addJwtVc(jwtVc: JwtVc.newFromCompactJws(jws: rawCredential)) {} else if let _ = try? credentialPack.addJsonVc(jsonVc: JsonVc.newFromJson(utf8JsonString: rawCredential)) {} else if let _ = try? credentialPack.addSdJwt(sdJwt: Vcdm2SdJwt.newFromCompactSdJwt(input: rawCredential)) {} else if let _ = try? credentialPack.addMDoc(mdoc: Mdoc.fromStringifiedDocument(stringifiedDocument: rawCredential, keyAlias: UUID().uuidString)) {} else {
         throw CredentialError.parsingError("Couldn't parse credential: \(rawCredential)")
     }
     return credentialPack
@@ -60,9 +56,8 @@ func credentialHasType(credentialPack: CredentialPack, credentialType: String) -
     return credentialWithType != nil ? true : false
 }
 
-
-func genericObjectFlattener(object: [String : GenericJSON], filter: [String] = []) -> [String:String] {
-    var res: [String:String] = [:]
+func genericObjectFlattener(object: [String: GenericJSON], filter: [String] = []) -> [String: String] {
+    var res: [String: String] = [:]
     object
         .filter { !filter.contains($0.key) }
         .forEach { (key, value) in

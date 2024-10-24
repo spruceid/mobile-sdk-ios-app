@@ -10,15 +10,15 @@ struct HandleOID4VPView: View {
     @Binding var path: NavigationPath
     var url: String
     @State var rawCredentials: [String] = CredentialDataStore.shared.getAllRawCredentials()
-    
-    @State private var holder: Holder? = nil
-    @State private var permissionRequest: PermissionRequest? = nil
-    @State private var permissionResponse: PermissionResponse? = nil
-    @State private var selectedCredential: ParsedCredential? = nil
+
+    @State private var holder: Holder?
+    @State private var permissionRequest: PermissionRequest?
+    @State private var permissionResponse: PermissionResponse?
+    @State private var selectedCredential: ParsedCredential?
     @State private var credentialClaims: [String: [String: GenericJSON]] = [:]
 
-    @State private var err: String? = nil
-    
+    @State private var err: String?
+
     func presentCredential() async {
         do {
             let credentials = rawCredentials.map { rawCredential in
@@ -29,14 +29,14 @@ struct HandleOID4VPView: View {
                 } catch {
                     return nil
                 }
-            }.compactMap{ $0 }
-            
+            }.compactMap { $0 }
+
             let credentialPack = CredentialPack()
-            
+
             credentials.forEach { credential in
                 _ = credentialPack.addSdJwt(sdJwt: credential.asSdJwt()!)
             }
-            
+
             credentialClaims = credentialPack.findCredentialClaims(claimNames: ["name", "type"])
 
             holder = try await Holder.newWithCredentials(
@@ -47,7 +47,7 @@ struct HandleOID4VPView: View {
             print("Error: \(error)")
         }
     }
-    
+
     func back() {
         while !path.isEmpty {
             path.removeLast()
@@ -107,7 +107,7 @@ struct HandleOID4VPView: View {
                                 err = error.localizedDescription
                             }
                         }
-                        
+
                     },
                     onCancel: back
                 )
@@ -120,7 +120,7 @@ struct DataFieldSelector: View {
     let requestedFields: [String]
     let onContinue: () -> Void
     let onCancel: () -> Void
-    
+
     init(requestedFields: [RequestedField], onContinue: @escaping () -> Void, onCancel: @escaping () -> Void) {
         self.requestedFields = requestedFields.map { field in
             field.name().capitalized
@@ -128,7 +128,7 @@ struct DataFieldSelector: View {
         self.onContinue = onContinue
         self.onCancel = onCancel
     }
-    
+
     var body: some View {
         VStack {
             Group {
@@ -149,7 +149,7 @@ struct DataFieldSelector: View {
                         .frame(maxWidth: .infinity, alignment: .leading)
                 }
             }
-            
+
             HStack {
                 Button {
                     onCancel()
@@ -164,7 +164,7 @@ struct DataFieldSelector: View {
                     RoundedRectangle(cornerRadius: 8)
                         .stroke(Color("BorderSecondary"), lineWidth: 1)
                 )
-                
+
                 Button {
                     onContinue()
                 }  label: {
@@ -191,9 +191,9 @@ struct CredentialSelector: View {
     let onContinue: ([ParsedCredential]) -> Void
     let onCancel: () -> Void
     var allowMultiple: Bool = false
-    
+
     @State private var selectedCredentials: [ParsedCredential] = []
-    
+
     func selectCredential(credential: ParsedCredential) {
         if allowMultiple {
             selectedCredentials.append(credential)
@@ -202,7 +202,7 @@ struct CredentialSelector: View {
             selectedCredentials.append(credential)
         }
     }
-    
+
     func getCredentialTitle(credential: ParsedCredential) -> String {
         if let name = credentialClaims[credential.id()]?["name"]?.toString() {
             return name
@@ -219,29 +219,29 @@ struct CredentialSelector: View {
             return ""
         }
     }
-    
+
     func toggleBinding(for credential: ParsedCredential) -> Binding<Bool> {
         Binding {
-            selectedCredentials.contains(where: { $0.id() == credential.id()} )
+            selectedCredentials.contains(where: { $0.id() == credential.id()})
         } set: { _ in
             // TODO: update when allowing multiple
             selectCredential(credential: credential)
         }
     }
-    
+
     var body: some View {
         VStack {
             Text("Select the credential\(allowMultiple ? "(s)" : "") to share")
                 .font(.customFont(font: .inter, style: .bold, size: .h2))
                 .foregroundStyle(Color("ColorStone950"))
-            
+
             // TODO: Add select all when implement allowMultiple
-            
+
             ScrollView {
                 ForEach(0..<credentials.count, id: \.self) { idx in
-                    
+
                     let credential = credentials[idx]
-                    
+
                     CredentialSelectorItem(
                         credential: credential,
                         requestedFields: getRequestedFields(credential),
@@ -252,7 +252,7 @@ struct CredentialSelector: View {
                     )
                 }
             }
-            
+
             HStack {
                 Button {
                     onCancel()
@@ -267,7 +267,7 @@ struct CredentialSelector: View {
                     RoundedRectangle(cornerRadius: 8)
                         .stroke(Color("BorderSecondary"), lineWidth: 1)
                 )
-                
+
                 Button {
                     if !selectedCredentials.isEmpty {
                         onContinue(selectedCredentials)
@@ -295,9 +295,9 @@ struct CredentialSelectorItem: View {
     let requestedFields: [String]
     let getCredentialTitle: (ParsedCredential) -> String
     @Binding var isChecked: Bool
-    
+
     @State var expanded = false
-    
+
     init(
         credential: ParsedCredential,
         requestedFields: [RequestedField],
@@ -311,7 +311,7 @@ struct CredentialSelectorItem: View {
         self.getCredentialTitle = getCredentialTitle
         self._isChecked = isChecked
     }
-    
+
     var body: some View {
         VStack {
             HStack {

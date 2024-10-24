@@ -19,7 +19,7 @@ public struct ContentView: View {
             )
         }
     }
-    
+
     func handleOid4vpUrl(url: URL) {
         self.path.append(
             HandleOID4VP(url: url.absoluteString)
