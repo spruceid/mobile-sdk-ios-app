@@ -1,5 +1,8 @@
 # iOS Reference App using our `mobile-sdk-swift`
 
+> [!IMPORTANT]
+> This repo has been archived in favor of a monorepo, please see https://github.com/spruceid/sprucekit-mobile.
+
 ## Contributing
 See [CONTRIBUTING.md](/CONTRIBUTING.md).
 
